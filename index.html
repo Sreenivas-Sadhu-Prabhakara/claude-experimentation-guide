@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Fable Field Guide — learn to use Claude Fable 5</title>
+  <meta name="description" content="An interactive field guide to Claude Fable 5: what it is, what's different, the pitfalls people miss, and prompt patterns you can use." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,900;1,9..144,500&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/styles.css" />
+</head>
+<body>
+
+  <!-- ░░ top bar ░░ -->
+  <header class="topbar">
+    <a class="brand" href="#top">
+      <span class="brand-mark">❦</span>
+      <span class="brand-text">The Fable Field&nbsp;Guide</span>
+    </a>
+    <nav class="topnav">
+      <a href="#what">What it is</a>
+      <a href="#different">What's different</a>
+      <a href="#pitfalls">Pitfalls</a>
+      <a href="#prompting">Prompting</a>
+      <a href="#decide">Should I?</a>
+      <a href="#cheatsheet">Cheat sheet</a>
+      <a href="#quiz">Quiz</a>
+    </nav>
+  </header>
+
+  <!-- ░░ mode toggle (floats) ░░ -->
+  <div class="modebar" id="modebar" role="group" aria-label="Explanation level">
+    <span class="modebar-label">Explain like I'm…</span>
+    <button class="mode-btn is-active" data-mode="eli5" aria-pressed="true">5 years old</button>
+    <button class="mode-btn" data-mode="tech" aria-pressed="false">a developer</button>
+  </div>
+
+  <main id="top">
+
+    <!-- ░░ HERO ░░ -->
+    <section class="hero">
+      <p class="kicker">Specimen no. 5 · Genus <em>Claude</em></p>
+      <h1>Claude&nbsp;Fable&nbsp;5</h1>
+      <p class="hero-sub">Anthropic's most capable widely released model — built for the hardest reasoning and the longest, most autonomous multi‑step work. This is the guide to using it <em>well</em>: what's genuinely different, and the traps almost everyone walks into first.</p>
+
+      <div class="statgrid">
+        <div class="stat"><span class="stat-num">1M</span><span class="stat-cap">token context window<br>(the max — and the default)</span></div>
+        <div class="stat"><span class="stat-num">128K</span><span class="stat-cap">max output tokens<br>per request</span></div>
+        <div class="stat"><span class="stat-num">$10<small>/$50</small></span><span class="stat-cap">per million tokens<br>input / output</span></div>
+        <div class="stat"><span class="stat-num">always</span><span class="stat-cap">thinking is on<br>(you can't turn it off)</span></div>
+      </div>
+
+      <p class="hero-id">Model ID: <code>claude-fable-5</code></p>
+    </section>
+
+    <!-- ░░ WHAT IS IT ░░ -->
+    <section id="what" class="band">
+      <h2><span class="sec-no">01</span> What is Fable, really?</h2>
+
+      <div class="prose mode-eli5" data-mode-block>
+        <p class="lede">Imagine the smartest, most patient helper you've ever met.</p>
+        <p>Before this helper says anything, it goes very quiet and <strong>thinks really hard</strong> — sometimes for a long time, like a chess player staring at the board. You can't watch it think; it does that part in its head. Then it gives you a careful answer.</p>
+        <p>It's so patient it can work on one big job <strong>for many minutes without stopping</strong> — reading lots of things, trying stuff, checking its own work — instead of just blurting out the first idea.</p>
+        <p>It's brilliant, but it's a <em>new kind</em> of helper, so a few of the old buttons and tricks you used with its older cousins don't work the same way anymore. That's what this guide is about: which buttons changed, and how to talk to it so it does its best work.</p>
+        <p class="aside">👉 Flip the switch at the top to <strong>"a developer"</strong> when you want the real, technical version.</p>
+      </div>
+
+      <div class="prose mode-tech" data-mode-block hidden>
+        <p class="lede">Fable 5 is a frontier‑tier model with a distinct API contract.</p>
+        <p>It shares the Messages API shape with the Opus family, but it is <strong>not</strong> a drop‑in for Opus — it changes how thinking is configured, how reasoning is returned, how tokens are counted, how long a single turn runs, and how refusals surface. Treat a migration to Fable as a behavior change, not just a model‑string swap.</p>
+        <ul>
+          <li><strong>Reasoning is always‑on and protected.</strong> Thinking happens on every request; the raw chain of thought is never returned to you (summaries only).</li>
+          <li><strong>It's tuned for long‑horizon autonomy.</strong> Single requests on hard tasks can legitimately run many minutes at higher effort.</li>
+          <li><strong>1M context at standard pricing</strong>, 128K max output, new tokenizer (~30% more tokens than Opus‑tier for the same text).</li>
+          <li><strong>Same call site as Opus</strong> — <code>client.messages.create(model="claude-fable-5", …)</code> — minus the parameters listed in §02 and §03.</li>
+        </ul>
+        <p class="aside">Use Fable only when you've <em>chosen</em> it. For a generic "use the latest model," the default upgrade target is still <code>claude-opus-4-8</code> — Fable costs more and re‑baselines your token math.</p>
+      </div>
+    </section>
+
+    <!-- ░░ WHAT'S DIFFERENT ░░ -->
+    <section id="different" class="band band-alt">
+      <h2><span class="sec-no">02</span> The seven things that are different</h2>
+      <p class="band-intro">Each card is a real, behavioral difference from the Opus/Sonnet models. These are the source of nearly every "wait, why isn't this working" moment. Tap one to expand.</p>
+
+      <div class="cardgrid" id="diffcards">
+        <!-- cards injected/enhanced by JS; written inline so it works without JS -->
+        <article class="dcard">
+          <div class="dcard-icon">🧠</div>
+          <h3>Thinking is always on</h3>
+          <p class="dcard-tldr">There is no "off." Don't send a <code>thinking</code> parameter at all.</p>
+          <div class="dcard-more">
+            <p>On Opus you could disable thinking or set a <code>budget_tokens</code>. On Fable both error with a <code>400</code>. Thinking applies automatically. You steer <em>how hard</em> it thinks with <code>output_config.effort</code> — <code>low · medium · high · xhigh · max</code> — not a token budget.</p>
+          </div>
+        </article>
+
+        <article class="dcard">
+          <div class="dcard-icon">🔒</div>
+          <h3>You never see the raw reasoning</h3>
+          <p class="dcard-tldr">"Protected thinking." Best you get is a <em>summary</em>.</p>
+          <div class="dcard-more">
+            <p>Responses carry <code>thinking</code> blocks, but the raw chain of thought is never exposed. <code>display:"summarized"</code> gives a readable summary; the default (<code>"omitted"</code>) leaves the text empty. When you continue a conversation <strong>on Fable</strong>, echo those blocks back <em>exactly as received</em> — editing them is a 400.</p>
+          </div>
+        </article>
+
+        <article class="dcard">
+          <div class="dcard-icon">🔢</div>
+          <h3>A new tokenizer</h3>
+          <p class="dcard-tldr">Same text ≈ <strong>30% more tokens</strong> than Opus‑tier.</p>
+          <div class="dcard-more">
+            <p>Old token counts, context budgets, and <code>max_tokens</code> values don't transfer. Re‑measure with <code>count_tokens</code> (passing <code>model:"claude-fable-5"</code> returns counts under <em>both</em> tokenizers so you can see the delta). Billing is per token, so an unchanged workload can simply cost more.</p>
+          </div>
+        </article>
+
+        <article class="dcard">
+          <div class="dcard-icon">⏱️</div>
+          <h3>Turns can take minutes</h3>
+          <p class="dcard-tldr">A 15‑minute single request is normal on hard tasks.</p>
+          <div class="dcard-more">
+            <p>It gathers context, builds, and verifies before answering. Plan for it: <strong>stream</strong>, set generous timeouts, show progress, and structure work so callers check back asynchronously instead of blocking on one synchronous request.</p>
+          </div>
+        </article>
+
+        <article class="dcard">
+          <div class="dcard-icon">🛑</div>
+          <h3>Refusals come back as a <em>success</em></h3>
+          <p class="dcard-tldr"><code>HTTP 200</code> with <code>stop_reason:"refusal"</code>.</p>
+          <div class="dcard-more">
+            <p>Safety classifiers (mainly bio + most cyber) can decline a request. It's a normal <code>200</code>, so code that reads <code>response.content[0]</code> blindly will crash on an empty array. Check <code>stop_reason</code> first. You can auto‑retry on another model with the <code>fallbacks</code> parameter.</p>
+          </div>
+        </article>
+
+        <article class="dcard">
+          <div class="dcard-icon">✍️</div>
+          <h3>No assistant prefill</h3>
+          <p class="dcard-tldr">Can't seed the answer with a leading assistant turn.</p>
+          <div class="dcard-more">
+            <p>Ending your <code>messages</code> on an <code>assistant</code> turn to force a shape returns a 400. Use <strong>structured outputs</strong> (<code>output_config.format</code> with a JSON schema) or a system‑prompt instruction instead. Same restriction as the 4.6+ family.</p>
+          </div>
+        </article>
+
+        <article class="dcard">
+          <div class="dcard-icon">📦</div>
+          <h3>30‑day retention required</h3>
+          <p class="dcard-tldr">Not available under zero‑data‑retention.</p>
+          <div class="dcard-more">
+            <p>If your org is set to ZDR (or any retention below 30 days), <strong>every</strong> Fable request returns a <code>400 invalid_request_error</code> — even a perfectly valid payload. If a migration suddenly 400s for no obvious reason, check the org's retention setting before debugging the body.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ░░ PITFALLS ░░ -->
+    <section id="pitfalls" class="band">
+      <h2><span class="sec-no">03</span> Pitfalls &amp; gotchas people miss</h2>
+      <p class="band-intro">The differences above turn into bugs in predictable ways. Here's each trap with the exact fix. Click to open; hit <strong>Copy</strong> on any snippet.</p>
+
+      <div class="accordion" id="pitfalls-acc">
+
+        <details class="pf">
+          <summary><span class="pf-tag">#1</span> Sending a <code>thinking</code> or <code>budget_tokens</code> parameter</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> You copy an Opus snippet that sets <code>thinking={"type":"enabled","budget_tokens":10000}</code> or <code>thinking={"type":"disabled"}</code>. Both return <code>400</code> on Fable.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Omit <code>thinking</code> entirely (adaptive applies automatically). Control depth with <code>output_config.effort</code>.</p>
+<pre class="code bad" data-copy><code># ❌ wrong — both of these 400 on Fable
+client.messages.create(model="claude-fable-5", max_tokens=16000,
+    thinking={"type": "enabled", "budget_tokens": 10000}, messages=msgs)
+client.messages.create(model="claude-fable-5", max_tokens=16000,
+    thinking={"type": "disabled"}, messages=msgs)</code></pre>
+<pre class="code good" data-copy><code># ✅ right — no thinking param; steer with effort
+client.messages.create(
+    model="claude-fable-5",
+    max_tokens=16000,
+    output_config={"effort": "high"},   # low | medium | high | xhigh | max
+    messages=msgs,
+)</code></pre>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#2</span> Reading <code>response.content[0]</code> without checking for a refusal</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> A safety classifier declines the request. You still get <code>HTTP 200</code>, but <code>content</code> is empty (pre‑output) or partial (mid‑stream). Indexing into it throws.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Branch on <code>stop_reason</code> <em>before</em> touching <code>content</code>. (Branch on <code>stop_reason</code>, never on <code>stop_details</code> — that can be <code>null</code> even on a refusal.)</p>
+<pre class="code good" data-copy><code>resp = client.messages.create(model="claude-fable-5", max_tokens=1024, messages=msgs)
+
+if resp.stop_reason == "refusal":
+    # pre-output: content is empty and you were NOT billed
+    # mid-stream: partial output WAS billed — discard it
+    handle_refusal(resp.stop_details)   # .category: "cyber" | "bio" | None
+else:
+    print(resp.content[0].text)</code></pre>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#3</span> Reusing your old <code>max_tokens</code> / cost math</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> The new tokenizer produces ~30% more tokens for the same content. Budgets, compaction triggers, and cost estimates calibrated on Opus are now wrong — and you can silently truncate output mid‑thought.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Re‑baseline with <code>count_tokens</code>. Passing <code>model:"claude-fable-5"</code> returns counts under both tokenizers so you can see the delta on <em>your</em> prompts. Never apply a blanket multiplier.</p>
+<pre class="code good" data-copy><code>r = client.messages.count_tokens(model="claude-fable-5", messages=msgs)
+print(r.input_tokens)                  # new tokenizer — what you're billed
+print(r.input_tokens_prior_tokenizer)  # same request under the old tokenizer</code></pre>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#4</span> A non‑streaming request with a big <code>max_tokens</code></summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> Fable can run for minutes and emit up to 128K tokens. A blocking, non‑streaming call hits SDK/HTTP timeouts and the connection drops — the SDK will even refuse the request up front.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Stream anything large or long. Use the SDK helper to get the assembled message when you don't need per‑token events.</p>
+<pre class="code good" data-copy><code>with client.messages.stream(
+    model="claude-fable-5",
+    max_tokens=64000,
+    output_config={"effort": "high"},
+    messages=msgs,
+) as stream:
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
+    final = stream.get_final_message()   # full Message, with usage + stop_reason</code></pre>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#5</span> Stripping or editing thinking blocks before sending them back</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> In a multi‑turn or tool loop you trim the assistant turn down to just the text, or you "clean up" the thinking blocks. On Fable, replaying <em>modified</em> blocks is rejected.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Append the full <code>response.content</code> back, unchanged — including empty‑text thinking blocks. (Continuing on a <em>different</em> model? It silently drops Fable's protected blocks for you — no stripping needed, and they aren't billed.)</p>
+<pre class="code good" data-copy><code># continuing the SAME conversation on Fable:
+messages.append({"role": "assistant", "content": resp.content})  # verbatim
+messages.append({"role": "user", "content": tool_results})</code></pre>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#6</span> Wanting to read the model's reasoning and getting blank blocks</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> You stream to a UI and see a long pause, then output — because the default <code>display</code> is <code>"omitted"</code> (thinking blocks arrive with empty text). It looks frozen.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Ask for the summary explicitly. (You still never get the raw chain of thought — and don't try to <em>prompt</em> for it; that can be refused with <code>category:"reasoning_extraction"</code>.)</p>
+<pre class="code good" data-copy><code>client.messages.create(
+    model="claude-fable-5",
+    max_tokens=16000,
+    thinking={"type": "adaptive", "display": "summarized"},  # readable progress
+    messages=msgs,
+)</code></pre>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#7</span> Forcing output shape with an assistant prefill</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> The classic <code>{"role":"assistant","content":"{\""}</code> prefill to force JSON. Returns a 400 on Fable.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Use structured outputs — guaranteed schema‑valid, no prefill.</p>
+<pre class="code good" data-copy><code>resp = client.messages.create(
+    model="claude-fable-5",
+    max_tokens=16000,
+    output_config={"format": {"type": "json_schema", "schema": MY_SCHEMA}},
+    messages=[{"role": "user", "content": "Extract the contact details."}],
+)
+# in the SDK you can also use client.messages.parse(...) with a Pydantic/Zod model</code></pre>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#8</span> Leaving aggressive, step‑by‑step prompts in place</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> Prompts written for older models — "CRITICAL: YOU MUST…", numbered step lists, "double‑check the layout before returning" — actually <em>reduce</em> Fable's output quality. It follows them literally and over‑plans or over‑tidies.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> State the goal and the constraints; remove the scaffolding. A/B your workload with the old step‑by‑step instructions deleted. See <a href="#prompting">§04 Prompting</a> for drop‑in snippets.</p>
+          </div>
+        </details>
+
+        <details class="pf">
+          <summary><span class="pf-tag">#9</span> Every request 400s and the payload looks fine</summary>
+          <div class="pf-body">
+            <p class="pf-trap">❌ <strong>The trap:</strong> You've triple‑checked the request body and still get <code>400 invalid_request_error</code> on everything.</p>
+            <p class="pf-fix">✅ <strong>The fix:</strong> Check the org's <strong>data‑retention</strong> setting. Fable requires 30‑day retention and is unavailable under ZDR — that's an org‑level 400, not a payload problem. Also confirm you removed <code>temperature</code> / <code>top_p</code> / <code>top_k</code> (all removed — they 400 too).</p>
+          </div>
+        </details>
+
+      </div>
+    </section>
+
+    <!-- ░░ PROMPTING ░░ -->
+    <section id="prompting" class="band band-alt">
+      <h2><span class="sec-no">04</span> How to talk to Fable</h2>
+
+      <div class="prose mode-eli5" data-mode-block>
+        <p class="lede">Don't over‑explain. Give it the goal, tell it the rules, then get out of the way.</p>
+        <p>Older helpers needed you to say "STEP 1, STEP 2, and PLEASE don't forget…". Fable is smart enough that all that nagging actually makes it <em>worse</em> — like a chef who gets distracted if you stand over their shoulder narrating. Tell it what "done" looks like and let it cook.</p>
+        <p>The little snippets below are polite, plain‑English rules you can paste into the "system" instructions to keep it tidy, honest, and not over‑doing things. Hit <strong>Copy</strong> and use them.</p>
+      </div>
+
+      <div class="prose mode-tech" data-mode-block hidden>
+        <p class="lede">Fable is highly steerable but under‑prompted is usually better than over‑prompted.</p>
+        <p>The big knobs:</p>
+        <ul>
+          <li><strong><code>output_config.effort</code> is your primary control.</strong> Default to <code>high</code>; use <code>xhigh</code> for the most capability‑sensitive work; drop to <code>low</code>/<code>medium</code> for routine tasks. Notably, <code>low</code> on Fable often beats <code>xhigh</code>/<code>max</code> on prior models — sweep it.</li>
+          <li><strong>Give the full task spec up front</strong> in one well‑specified turn for long‑horizon work. Ambiguous, progressively‑revealed prompts reduce both efficiency and quality.</li>
+          <li><strong>Give the <em>why</em>, not just the request.</strong> Fable connects the task to context better when it knows the intent.</li>
+          <li><strong>Invest in a communication‑style section</strong> — Fable responds strongly to it, and un‑steered it can over‑elaborate (heavy PR descriptions, unrequested refactors, narrated comments).</li>
+        </ul>
+        <p>The snippets below are battle‑tested system‑prompt addenda for exactly these behaviors.</p>
+      </div>
+
+      <div class="snippets">
+        <div class="snip">
+          <div class="snip-head"><h4>Don't over‑plan</h4><span class="snip-when">for ambiguous tasks</span></div>
+<pre class="code snippet" data-copy><code>When you have enough information to act, act. Do not re-derive facts
+already established, re-litigate a decision the user has made, or
+narrate options you won't pursue. If you're weighing a choice, give a
+recommendation, not an exhaustive survey. (This does not apply to
+thinking blocks.)</code></pre>
+        </div>
+
+        <div class="snip">
+          <div class="snip-head"><h4>Don't tidy / over‑engineer</h4><span class="snip-when">at higher effort</span></div>
+<pre class="code snippet" data-copy><code>Don't add features, refactor, or introduce abstractions beyond what the
+task requires. A bug fix doesn't need surrounding cleanup. Don't design
+for hypothetical future requirements — do the simplest thing that works.
+Don't add error handling or validation for scenarios that cannot happen;
+only validate at system boundaries (user input, external APIs).</code></pre>
+        </div>
+
+        <div class="snip">
+          <div class="snip-head"><h4>Ground progress claims</h4><span class="snip-when">long agentic runs</span></div>
+<pre class="code snippet" data-copy><code>Before reporting progress, audit each claim against a tool result from
+this session. Only report work you can point to evidence for; if
+something isn't verified, say so. Report outcomes faithfully: if tests
+fail, say so with the output; if a step was skipped, say that; when
+something is done and verified, state it plainly without hedging.</code></pre>
+        </div>
+
+        <div class="snip">
+          <div class="snip-head"><h4>Respect boundaries</h4><span class="snip-when">avoid unrequested actions</span></div>
+<pre class="code snippet" data-copy><code>When the user is describing a problem, asking a question, or thinking
+out loud rather than requesting a change, the deliverable is your
+assessment. Report your findings and stop. Don't apply a fix until they
+ask. Before running a state-changing command (restarts, deletes, config
+edits), check the evidence actually supports that specific action.</code></pre>
+        </div>
+
+        <div class="snip">
+          <div class="snip-head"><h4>Delegate to sub‑agents</h4><span class="snip-when">parallelizable work</span></div>
+<pre class="code snippet" data-copy><code>Delegate independent subtasks to sub-agents and keep working while they
+run. Prefer sub-agents that communicate asynchronously over
+spawn-and-block. Intervene if a sub-agent goes off track or is missing
+relevant context.</code></pre>
+        </div>
+
+        <div class="snip">
+          <div class="snip-head"><h4>Use a memory file</h4><span class="snip-when">recurring work</span></div>
+<pre class="code snippet" data-copy><code>Store one lesson per file with a one-line summary at the top. Record
+corrections and confirmed approaches alike, including why they mattered.
+Don't save what the repo or chat history already records; update an
+existing note rather than duplicating; delete notes that turn out wrong.</code></pre>
+        </div>
+
+        <div class="snip">
+          <div class="snip-head"><h4>Stay autonomous</h4><span class="snip-when">unattended / async pipelines</span></div>
+<pre class="code snippet" data-copy><code>You are operating autonomously. The user is not watching and cannot
+answer mid-task, so asking "Want me to…?" will block the work. For
+reversible actions that follow from the request, proceed without asking.
+Before ending your turn, check your last paragraph: if it's a plan, a
+question, or a promise about work you haven't done, do that work now.</code></pre>
+        </div>
+
+        <div class="snip">
+          <div class="snip-head"><h4>Write readable summaries</h4><span class="snip-when">long sessions</span></div>
+<pre class="code snippet" data-copy><code>When you write the final summary, drop the working shorthand. Open with
+the outcome: one sentence on what happened or what you found. Then the
+supporting detail. Use complete sentences; spell terms out; no arrow
+chains or made-up labels the reader hasn't seen. If you must choose
+between short and clear, choose clear.</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ DECISION HELPER ░░ -->
+    <section id="decide" class="band">
+      <h2><span class="sec-no">05</span> Should I use Fable for this?</h2>
+      <p class="band-intro">Fable is the right tool for some jobs and overkill (or the wrong shape) for others. Toggle what's true for your task and get a read.</p>
+
+      <div class="decider">
+        <ul class="decider-q" id="decider-q">
+          <li><label><input type="checkbox" data-w="2" /> The task is genuinely hard / long‑horizon (a complex refactor, deep research, an overnight agent run)</label></li>
+          <li><label><input type="checkbox" data-w="2" /> I need top‑tier reasoning and quality matters more than cost</label></li>
+          <li><label><input type="checkbox" data-w="1" /> Multi‑step agentic work with tools and/or sub‑agents</label></li>
+          <li><label><input type="checkbox" data-w="-2" /> It's high‑volume, latency‑sensitive, or cost‑sensitive (classification, chat, simple extraction)</label></li>
+          <li><label><input type="checkbox" data-w="-3" /> My org is on zero‑data‑retention and I can't change that</label></li>
+          <li><label><input type="checkbox" data-w="-1" /> I just want "the latest model" with no specific need</label></li>
+        </ul>
+        <div class="decider-out" id="decider-out" aria-live="polite">
+          <p class="decider-verdict">Pick a few boxes above ☝️</p>
+          <p class="decider-detail">I'll give you a recommendation.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ░░ CHEAT SHEET ░░ -->
+    <section id="cheatsheet" class="band band-alt">
+      <h2><span class="sec-no">06</span> One‑page cheat sheet</h2>
+      <div class="sheet">
+        <table class="sheet-table">
+          <thead><tr><th>Topic</th><th>Do this on Fable</th></tr></thead>
+          <tbody>
+            <tr><td>Model ID</td><td><code>claude-fable-5</code> (exactly — no date suffix)</td></tr>
+            <tr><td>Thinking</td><td>Omit the param. Never send <code>budget_tokens</code> or <code>type:"disabled"</code> → 400.</td></tr>
+            <tr><td>Think depth</td><td><code>output_config.effort</code>: <code>low · medium · high · xhigh · max</code>. Default <code>high</code>.</td></tr>
+            <tr><td>See reasoning</td><td><code>thinking:{type:"adaptive",display:"summarized"}</code> for a summary. Raw CoT never returned.</td></tr>
+            <tr><td>Sampling</td><td><code>temperature</code>/<code>top_p</code>/<code>top_k</code> all removed → 400. Steer via prompt.</td></tr>
+            <tr><td>Output shape</td><td><code>output_config.format</code> (JSON schema). No assistant prefill.</td></tr>
+            <tr><td>Big / long output</td><td>Stream. Up to 128K output; non‑streaming blocks at large <code>max_tokens</code>.</td></tr>
+            <tr><td>Tokens</td><td>~30% more than Opus. Re‑measure with <code>count_tokens</code> (returns both tokenizers).</td></tr>
+            <tr><td>Refusals</td><td><code>HTTP 200</code> + <code>stop_reason:"refusal"</code>. Check it before reading <code>content</code>.</td></tr>
+            <tr><td>Auto‑retry refusals</td><td><code>fallbacks=[{"model":"claude-opus-4-8"}]</code> + beta <code>server-side-fallback-2026-06-01</code>.</td></tr>
+            <tr><td>Multi‑turn</td><td>Append full <code>response.content</code> back, unchanged (thinking blocks included).</td></tr>
+            <tr><td>Org setup</td><td>Requires 30‑day data retention. ZDR → 400 on everything.</td></tr>
+            <tr><td>Prompting</td><td>Goal + constraints, not step‑by‑step. Over‑prescription lowers quality.</td></tr>
+            <tr><td>Cache minimum</td><td>2048‑token minimum cacheable prefix (lower than Opus's 4096).</td></tr>
+            <tr><td>Pricing</td><td>$10 / $50 per 1M input / output tokens.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ░░ QUIZ ░░ -->
+    <section id="quiz" class="band">
+      <h2><span class="sec-no">07</span> Quick check</h2>
+      <p class="band-intro">Five questions. Instant feedback. Prove the gotchas stuck.</p>
+      <div class="quiz" id="quiz"><!-- built by app.js --></div>
+      <noscript><p class="aside">The quiz needs JavaScript. Everything else on this page works without it.</p></noscript>
+    </section>
+
+  </main>
+
+  <footer class="foot">
+    <p class="foot-mark">❦</p>
+    <p>The Fable Field Guide — a learning resource for <code>claude-fable-5</code>.</p>
+    <p class="foot-small">Model facts reflect Fable 5 as documented by Anthropic. The live source of truth is <a href="https://platform.claude.com/docs">platform.claude.com/docs</a>. Examples and reference docs live alongside this page in the repo.</p>
+  </footer>
+
+  <button class="totop" id="totop" aria-label="Back to top" hidden>↑</button>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

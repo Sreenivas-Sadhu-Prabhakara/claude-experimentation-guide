@@ -1,0 +1,25 @@
+{
+  "name": "fable-field-guide-examples",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "TypeScript examples for learning Claude Fable 5",
+  "scripts": {
+    "hello": "tsx 01_hello_fable.ts",
+    "effort": "tsx 02_effort_levels.ts",
+    "refusal": "tsx 03_handle_refusal.ts",
+    "stream": "tsx 04_streaming.ts",
+    "tokens": "tsx 05_token_counting.ts",
+    "structured": "tsx 06_structured_output.ts",
+    "agent": "tsx 07_agent_loop.ts"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.70.0",
+    "dotenv": "^16.4.5",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.0",
+    "typescript": "^5.5.0"
+  }
+}

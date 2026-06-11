@@ -1,0 +1,11 @@
+# Fable 5 + server-side fallbacks + the dual-tokenizer count_tokens field are
+# recent additions — install the latest SDK. If a field in an example is
+# missing (e.g. input_tokens_prior_tokenizer, fallbacks), upgrade:
+#   pip install -U anthropic
+anthropic>=0.70.0
+
+# Optional: lets the examples read your key from a local .env file.
+python-dotenv>=1.0.0
+
+# Used by 06_structured_output.py
+pydantic>=2.0.0
