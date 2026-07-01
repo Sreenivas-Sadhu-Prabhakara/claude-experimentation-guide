@@ -10,7 +10,7 @@ adversarial, spec-driven build pipeline, which model and effort earn their cost?
 The hosted decks are the evidence; the machine-readable **routing recommendation**
 is the point.
 
-🔗 **Live:** <https://sreenivas-sadhu-prabhakara.github.io/fable-field-guide/>
+🔗 **Live:** <https://sreenivas-sadhu-prabhakara.github.io/claude-experimentation-guide/>
 
 ---
 
