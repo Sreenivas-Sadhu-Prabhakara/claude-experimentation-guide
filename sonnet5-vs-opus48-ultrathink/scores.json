@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "id": "A", "name": "Brownfield gotcha catch", "type": "objective (3 seeded defects + real Apolaki auth code)",
+      "score": {
+        "opus48":  { "defects": 9, "seeded_caught": "3/3", "false_positives": 0, "verdict": "NEEDS-FIX",
+                     "note": "+1 vs default: gates can be mounted independently / out of order." },
+        "sonnet5": { "defects": 7, "seeded_caught": "3/3", "false_positives": 0, "verdict": "NEEDS-FIX",
+                     "note": "+1 vs default: distinct error codes leak an enumeration oracle." }
+      }
+    },
+    {
+      "id": "B", "name": "Shift-left LLD design", "type": "rubric (14 items)",
+      "score": {
+        "opus48":  { "rubric": "14/14", "note": "~2.2x longer than default; more exhaustive threat/edge coverage, same rubric structure (diminishing returns)." },
+        "sonnet5": { "rubric": "14/14", "note": "~1.9x longer than default; deeper domain + threat detail, same rubric structure." }
+      }
+    },
+    {
+      "id": "C", "name": "Adversarial gate verifier", "type": "objective (planted fail-open bug)",
+      "score": {
+        "opus48":  { "findings": 14, "verdict": "VETO", "caught_planted": true,
+                     "note": "+3 vs default (HEAD->GET, req.user trust invariant, dead-rule normalization) but STILL missed the stateful g/y regex bug — blind spot effort didn't fix." },
+        "sonnet5": { "findings": 13, "verdict": "VETO", "caught_planted": true,
+                     "note": "+4 vs default; CONVERGED onto Opus's default strengths (unknown-role-should-deny, permission, boundary, first-match ordering)." }
+      }
+    }
+  ]
+}

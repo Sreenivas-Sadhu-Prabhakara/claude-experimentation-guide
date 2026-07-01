@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sonnet 5 vs Opus 4.8 — at max effort (ultrathink)</title>
+<meta name="description" content="We re-ran the Sonnet 5 vs Opus 4.8 Kriya lab at maximum reasoning effort. What did cranking the dial actually buy — and what didn't move?" />
+<link rel="stylesheet" href="../shared/keynote.css" />
+</head>
+<body>
+<a href="../" style="position:fixed;top:15px;left:18px;z-index:30;color:#86868b;text-decoration:none;font:500 13px/1 -apple-system,BlinkMacSystemFont,'SF Pro Text',Helvetica,Arial,sans-serif;background:rgba(0,0,5,.55);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.1);border-radius:999px;padding:8px 14px">← all labs</a>
+<div class="topbar" id="topbar"></div>
+<nav class="rail" id="rail"></nav>
+<div class="hint rev"><kbd>↓</kbd> or <kbd>→</kbd> to advance</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 · TITLE -->
+  <section class="slide" data-name="Title">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> A Kriya Lab · max effort · 01 July 2026</div>
+      <h1 class="rev d1">We turned the<br>dial to <span class="grad">max.</span></h1>
+      <p class="lede rev d3" style="margin-top:30px">Same models. Same real Apolaki build. Same three Kriya tasks. This time both <strong>Sonnet&nbsp;5</strong> and <strong>Opus&nbsp;4.8</strong> ran at maximum reasoning effort — an identical <span class="mono">ultrathink</span> directive on both arms.</p>
+      <p class="body rev d4" style="margin-top:20px">The question isn't who wins. It's: what does more thinking actually <em>buy</em> — and what refuses to move?</p>
+    </div>
+  </section>
+
+  <!-- 2 · THE QUESTION -->
+  <section class="slide" data-name="Question">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The question</div>
+      <h2 class="rev d1">At default effort, they were close.<br>Is “max” worth paying for?</h2>
+      <p class="lede rev d2">Cranking effort roughly doubles the thinking. Three things could happen: it finds <strong>more bugs</strong>, it <strong>changes a verdict</strong>, or it just runs up <strong>a bigger bill</strong>.</p>
+      <p class="lede rev d3" style="margin-top:20px;color:var(--ink)">We measured all three. <span class="grad">Two of them surprised us.</span></p>
+      <p class="foot rev d4">Baseline: the <a class="link" href="../sonnet5-vs-opus48-default/">default-effort lab</a>. Everything here is the same suite re-run with a matched max-rigor directive.</p>
+    </div>
+  </section>
+
+  <!-- 3 · PROOF EFFORT TOOK EFFECT -->
+  <section class="slide" data-name="Effort landed">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> First: did “max” actually do anything?</div>
+      <h2 class="rev d1">Yes — <span class="grad">1.5–2.2×</span> more thinking.</h2>
+      <p class="lede rev d2">Thinking tokens bill as output. Both models generated far more of them than at default effort — proof the directive changed behaviour, not just the label.</p>
+      <div class="bars rev d3" style="max-width:820px;margin-top:26px">
+        <div class="bar"><span class="lbl">Opus · default</span><span class="track"><span class="fill op" style="--w:36%"></span></span><span class="val">18,913</span></div>
+        <div class="bar"><span class="lbl">Opus · max</span><span class="track"><span class="fill op" style="--w:68%"></span></span><span class="val">35,667</span></div>
+        <div class="bar"><span class="lbl">Sonnet · default</span><span class="track"><span class="fill so" style="--w:56%"></span></span><span class="val">29,414</span></div>
+        <div class="bar"><span class="lbl">Sonnet · max</span><span class="track"><span class="fill so" style="--w:100%"></span></span><span class="val">52,170</span></div>
+      </div>
+      <p class="foot rev d4">Total output tokens across the three tasks. Per task the jump ran 1.54×–2.21× (Opus's design answer alone grew 2.2×).</p>
+    </div>
+  </section>
+
+  <!-- 4 · WHAT IT BOUGHT (recall) -->
+  <section class="slide" data-name="What it bought">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> What max effort bought · recall</div>
+      <h2 class="rev d1">More thinking → <span class="grad">more findings.</span> Really.</h2>
+      <p class="lede rev d2">On the two objective tasks, both models genuinely found <strong>more valid defects</strong> at max effort — not noise, real issues they'd missed.</p>
+      <div class="panel rev d3" style="margin-top:22px">
+        <table class="sc" style="margin-top:0">
+          <thead><tr><th>Task</th><th class="s">Sonnet 5 · default → max</th><th class="o">Opus 4.8 · default → max</th></tr></thead>
+          <tbody>
+            <tr><td>Gotcha catch — valid defects</td><td class="s num">6 → 7</td><td class="o num">8 → 9</td></tr>
+            <tr><td>Adversarial gate — findings</td><td class="s num">9 → 13</td><td class="o num">11 → 14</td></tr>
+            <tr><td>Seeded defects still caught</td><td class="s">3 / 3</td><td class="o">3 / 3</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot rev d4">The new catches were real: Opus flagged that the two guards can be mounted out of order; Sonnet spotted an error-code enumeration oracle. Recall rose — for ~1.7× the cost (next-but-one slide).</p>
+    </div>
+  </section>
+
+  <!-- 5 · WHAT IT DIDN'T CHANGE (verdict) -->
+  <section class="slide" data-name="Verdict unmoved">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Surprise #1 · what it did NOT change</div>
+      <h2 class="rev d1">The verdict never moved.</h2>
+      <p class="lede rev d2">Every gate decision was <strong>identical</strong> at default and max effort. Both models vetoed the fail-open gate at both settings; both flagged the diff as needs-fix at both settings.</p>
+      <div class="panel rev d3" style="margin-top:22px">
+        <table class="sc" style="margin-top:0">
+          <thead><tr><th>Decision</th><th class="s">Sonnet 5</th><th class="o">Opus 4.8</th></tr></thead>
+          <tbody>
+            <tr><td>Gate task — default</td><td class="s">VETO ✓</td><td class="o">VETO ✓</td></tr>
+            <tr><td>Gate task — max</td><td class="s">VETO ✓</td><td class="o">VETO ✓</td></tr>
+            <tr><td>Gotcha task — both efforts</td><td class="s">NEEDS-FIX ✓</td><td class="o">NEEDS-FIX ✓</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="lede rev d4" style="margin-top:24px;color:var(--ink)">Max effort bought a <span class="grad">longer list</span>, not a <span class="grad-warm">different answer.</span></p>
+    </div>
+  </section>
+
+  <!-- 6 · THE BLIND SPOT -->
+  <section class="slide" data-name="Blind spot">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Surprise #2 · the blind spot that survived</div>
+      <h2 class="rev d1">Effort didn't fix the <span class="grad-warm">blind spot.</span></h2>
+      <p class="lede rev d2">At default effort, Sonnet 5 uniquely caught a subtle bug — a stateful <span class="mono">g</span>/<span class="mono">y</span> regex flag that makes authorization nondeterministic. We hoped max-effort Opus would find it too.</p>
+      <div class="split rev d3" style="margin-top:22px">
+        <div class="s-side">
+          <div class="minihead s">Sonnet 5 at max</div>
+          <ul class="clean" style="margin-top:4px">
+            <li><strong>Converged upward</strong> — picked up Opus's default strengths it had missed (unknown-role-should-deny, permission, boundary checks).</li>
+            <li>Kept its signature stateful-regex catch.</li>
+          </ul>
+        </div>
+        <div class="o-side">
+          <div class="minihead o">Opus 4.8 at max</div>
+          <ul class="clean warm" style="margin-top:4px">
+            <li>Found 3 more issues (HEAD→GET, trust invariants, dead rules)…</li>
+            <li><strong>…but STILL missed the stateful-regex bug</strong> — even with 2× the thinking.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="lede rev d4" style="margin-top:24px;color:var(--ink)">Some blind spots are <span class="grad">model-characteristic, not effort-limited.</span> You can't out-think them — you have to <strong>ensemble</strong> around them.</p>
+    </div>
+  </section>
+
+  <!-- 7 · THE BILL -->
+  <section class="slide" data-name="The bill">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> What it cost · the bill</div>
+      <h2 class="rev d1">Max effort ≈ <span class="grad-warm">1.7×</span> the price.</h2>
+      <p class="lede rev d2">For that longer finding list you pay roughly 1.6–1.7× the default cost. And a twist: at max, Sonnet 5's cost edge <em>widens</em> — because Opus's verbosity grew even faster.</p>
+      <div class="bars rev d3" style="max-width:820px;margin-top:24px">
+        <div class="bar"><span class="lbl">Opus · default</span><span class="track"><span class="fill op" style="--w:58%"></span></span><span class="val">$0.588</span></div>
+        <div class="bar"><span class="lbl">Opus · max</span><span class="track"><span class="fill op" style="--w:100%"></span></span><span class="val">$1.009</span></div>
+        <div class="bar"><span class="lbl">Sonnet · max · std</span><span class="track"><span class="fill so" style="--w:89%"></span></span><span class="val">$0.902</span></div>
+        <div class="bar"><span class="lbl">Sonnet · max · intro</span><span class="track"><span class="fill soi" style="--w:60%"></span></span><span class="val">$0.601</span></div>
+      </div>
+      <div class="grid g2 rev d4" style="margin-top:26px">
+        <div class="panel"><div class="stat grad" style="font-size:clamp(30px,4.5vw,50px)">11% → 40%</div><p class="body" style="margin-top:6px">Sonnet 5's cost advantage at max effort: ~11% cheaper at standard, ~40% under intro pricing (vs ~5% / 37% at default).</p></div>
+        <div class="panel"><div class="stat" style="font-size:clamp(30px,4.5vw,50px)">≈ $3.06</div><p class="body" style="margin-top:6px">Every run on this site — all 12 (6 default + 6 max) across both models — cost about three dollars at standard published rates.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8 · ENGINEERING TAKEAWAY -->
+  <section class="slide" data-name="Takeaway">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The engineering takeaway</div>
+      <h2 class="rev d1">Max effort is a <span class="grad">scalpel</span>, not a default.</h2>
+      <ul class="clean rev d2" style="margin-top:22px;max-width:940px">
+        <li><strong>Pay for max on enumeration, not on decisions.</strong> Verdicts were effort-robust — spend the extra thinking only when you need the <em>full</em> defect list, not a PASS/VETO.</li>
+        <li><strong>Ensemble for the highest stakes.</strong> Blind spots didn't close with effort. For critical audits, union Opus + Sonnet rather than trusting one at max.</li>
+        <li><strong>Cap Sonnet 5's output.</strong> Its cheaper tokens only pay off once you rein in the 1.5–1.9× verbosity.</li>
+        <li><strong>Front-load Sonnet work before 31 Aug 2026</strong> while intro pricing makes it ~40% cheaper.</li>
+      </ul>
+      <p class="foot rev d3">These fold straight into <a class="link" href="../routing/ROUTING.md">the routing recommendation</a> that Kriya consumes — which is the whole point of running these.</p>
+    </div>
+  </section>
+
+  <!-- 9 · HONESTY -->
+  <section class="slide" data-name="Limitations">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The honest fine print</div>
+      <h2 class="rev d1">What this is — and isn't.</h2>
+      <ul class="clean rev d2" style="margin-top:18px;max-width:940px">
+        <li><strong>“Max” = an identical ultrathink directive</strong> on both arms (headless mode has no literal effort knob). Effort is held <em>equal</em>, and the 1.5–2.2× token jump confirms it landed.</li>
+        <li><strong>One run per task.</strong> Signal, not a benchmark.</li>
+        <li><strong>Graded against published answer keys</strong> by the author, not a blind panel — objective tasks have ground-truth defects.</li>
+        <li><strong>Served model verified from billing telemetry</strong> for all 6 runs; generated code discarded; costs at official published rates.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 10 · CLOSE -->
+  <section class="slide" data-name="Close">
+    <div class="wrap" style="text-align:center">
+      <div class="kicker rev" style="justify-content:center"><span class="dot"></span> The takeaway</div>
+      <h2 class="rev d1" style="font-size:clamp(28px,5.5vw,68px)">Point max effort at<br><span class="grad">enumeration</span>, not <span class="grad-warm">decisions.</span></h2>
+      <p class="lede rev d2" style="margin:26px auto 0">More thinking found more bugs, never changed a verdict, and couldn't fix a model's blind spot. So spend it deliberately — and ensemble when it matters most.</p>
+      <p class="body rev d3" style="margin:32px auto 0;color:var(--muted2)">Built 01 Jul 2026 · <span class="mono">claude-sonnet-5</span> vs <span class="mono">claude-opus-4-8</span> · max effort · <a class="link" href="../">all labs</a> · <a class="link" href="../routing/ROUTING.md">routing</a></p>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const slides=[...document.querySelectorAll('.slide')];
+  const rail=document.getElementById('rail');
+  slides.forEach((s,i)=>{const a=document.createElement('a');a.href='#';a.title=s.dataset.name||('Slide '+(i+1));
+    a.addEventListener('click',e=>{e.preventDefault();s.scrollIntoView({behavior:'smooth'});});rail.appendChild(a);});
+  const dots=[...rail.children];
+  const io=new IntersectionObserver((es)=>{es.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.rev').forEach(r=>r.classList.add('in'));
+      e.target.querySelectorAll('.bar').forEach(b=>b.classList.add('in'));
+      const i=slides.indexOf(e.target);dots.forEach((d,j)=>d.classList.toggle('on',j===i));
+    }});},{threshold:.55});
+  slides.forEach(s=>io.observe(s));
+  const tb=document.getElementById('topbar');
+  addEventListener('scroll',()=>{const h=document.documentElement.scrollHeight-innerHeight;tb.style.width=(100*scrollY/h)+'%';},{passive:true});
+  function cur(){let best=0,bd=1e9;slides.forEach((s,i)=>{const d=Math.abs(s.getBoundingClientRect().top);if(d<bd){bd=d;best=i;}});return best;}
+  addEventListener('keydown',e=>{
+    if(['ArrowDown','ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();slides[Math.min(cur()+1,slides.length-1)].scrollIntoView({behavior:'smooth'});}
+    if(['ArrowUp','ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();slides[Math.max(cur()-1,0)].scrollIntoView({behavior:'smooth'});}
+  });
+</script>
+</body>
+</html>

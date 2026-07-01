@@ -1,0 +1,42 @@
+{
+  "hub": "Kriya Model Lab",
+  "tagline": "A re-runnable evaluation harness that decides which model + effort Kriya should use — with the runs to prove it.",
+  "updated": "2026-07-01",
+  "routing": "routing/routing.json",
+  "items": [
+    {
+      "id": "sonnet5-vs-opus48-ultrathink",
+      "kind": "lab",
+      "title": "Sonnet 5 vs Opus 4.8",
+      "subtitle": "ultrathink · max effort",
+      "path": "sonnet5-vs-opus48-ultrathink/",
+      "results": "sonnet5-vs-opus48-ultrathink/results.json",
+      "date": "2026-07-01",
+      "effort": "max",
+      "models": ["claude-sonnet-5", "claude-opus-4-8"],
+      "blurb": "Does cranking to max effort change the verdict? Recall rose ~1.7x the cost, gate decisions didn't move, and one blind spot survived."
+    },
+    {
+      "id": "sonnet5-vs-opus48-default",
+      "kind": "lab",
+      "title": "Sonnet 5 vs Opus 4.8",
+      "subtitle": "default effort",
+      "path": "sonnet5-vs-opus48-default/",
+      "results": "sonnet5-vs-opus48-default/results.json",
+      "date": "2026-07-01",
+      "effort": "default",
+      "models": ["claude-sonnet-5", "claude-opus-4-8"],
+      "blurb": "The first head-to-head on a real Apolaki build under Kriya. Headline: cheaper per token != cheaper per task."
+    },
+    {
+      "id": "fable",
+      "kind": "guide",
+      "title": "The Fable Field Guide",
+      "subtitle": "explainer",
+      "path": "fable/",
+      "date": "2026-06-11",
+      "models": ["claude-fable-5"],
+      "blurb": "How to actually use Claude Fable 5 well — the quirks, the pitfalls, and copy-paste patterns."
+    }
+  ]
+}

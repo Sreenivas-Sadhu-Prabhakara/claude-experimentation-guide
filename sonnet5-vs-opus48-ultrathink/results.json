@@ -1,0 +1,151 @@
+{
+  "id": "sonnet5-vs-opus48-ultrathink",
+  "title": "Sonnet 5 vs Opus 4.8 \u2014 ultrathink (max effort)",
+  "date": "2026-07-01",
+  "effort": "max (identical 'ultrathink' max-rigor directive prepended to both arms)",
+  "arms": {
+    "opus48": "claude-opus-4-8",
+    "sonnet5": "claude-sonnet-5"
+  },
+  "verified_via": "claude-code modelUsage billing telemetry",
+  "pricing_note": "Sonnet 5 standard $3/$15, intro $2/$10 through 2026-08-31; Opus 4.8 $5/$25 per MTok. Costs normalized to official published rates.",
+  "headline": "Max effort raised recall for ~1.7x the cost, but the gate verdicts never changed and Opus still missed Sonnet's stateful-regex bug \u2014 a model-characteristic blind spot effort didn't fix.",
+  "tasks": [
+    {
+      "id": "A",
+      "name": "Brownfield gotcha catch",
+      "type": "objective (3 seeded defects + real Apolaki auth code)",
+      "opus48": {
+        "requested_model": "claude-opus-4-8",
+        "served_model": "claude-opus-4-8",
+        "verified": true,
+        "input_tokens": 2784,
+        "output_tokens": 8487,
+        "cache_read_tokens": 14839,
+        "cache_create_tokens": 2853,
+        "duration_s": 110.4,
+        "cost_usd_std": 0.2513,
+        "cost_usd_intro": null,
+        "score": {
+          "defects": 9,
+          "seeded_caught": "3/3",
+          "false_positives": 0,
+          "verdict": "NEEDS-FIX",
+          "note": "+1 vs default: gates can be mounted independently / out of order."
+        }
+      },
+      "sonnet5": {
+        "requested_model": "claude-sonnet-5",
+        "served_model": "claude-sonnet-5",
+        "verified": true,
+        "input_tokens": 2861,
+        "output_tokens": 10937,
+        "cache_read_tokens": 22898,
+        "cache_create_tokens": 6470,
+        "duration_s": 121.2,
+        "cost_usd_std": 0.2038,
+        "cost_usd_intro": 0.1358,
+        "score": {
+          "defects": 7,
+          "seeded_caught": "3/3",
+          "false_positives": 0,
+          "verdict": "NEEDS-FIX",
+          "note": "+1 vs default: distinct error codes leak an enumeration oracle."
+        }
+      }
+    },
+    {
+      "id": "B",
+      "name": "Shift-left LLD design",
+      "type": "rubric (14 items)",
+      "opus48": {
+        "requested_model": "claude-opus-4-8",
+        "served_model": "claude-opus-4-8",
+        "verified": true,
+        "input_tokens": 2784,
+        "output_tokens": 16804,
+        "cache_read_tokens": 14839,
+        "cache_create_tokens": 2896,
+        "duration_s": 215.8,
+        "cost_usd_std": 0.4595,
+        "cost_usd_intro": null,
+        "score": {
+          "rubric": "14/14",
+          "note": "~2.2x longer than default; more exhaustive threat/edge coverage, same rubric structure (diminishing returns)."
+        }
+      },
+      "sonnet5": {
+        "requested_model": "claude-sonnet-5",
+        "served_model": "claude-sonnet-5",
+        "verified": true,
+        "input_tokens": 2861,
+        "output_tokens": 28476,
+        "cache_read_tokens": 22898,
+        "cache_create_tokens": 6513,
+        "duration_s": 305.6,
+        "cost_usd_std": 0.467,
+        "cost_usd_intro": 0.3113,
+        "score": {
+          "rubric": "14/14",
+          "note": "~1.9x longer than default; deeper domain + threat detail, same rubric structure."
+        }
+      }
+    },
+    {
+      "id": "C",
+      "name": "Adversarial gate verifier",
+      "type": "objective (planted fail-open bug)",
+      "opus48": {
+        "requested_model": "claude-opus-4-8",
+        "served_model": "claude-opus-4-8",
+        "verified": true,
+        "input_tokens": 2784,
+        "output_tokens": 10376,
+        "cache_read_tokens": 14839,
+        "cache_create_tokens": 2858,
+        "duration_s": 142.0,
+        "cost_usd_std": 0.2986,
+        "cost_usd_intro": null,
+        "score": {
+          "findings": 14,
+          "verdict": "VETO",
+          "caught_planted": true,
+          "note": "+3 vs default (HEAD->GET, req.user trust invariant, dead-rule normalization) but STILL missed the stateful g/y regex bug \u2014 blind spot effort didn't fix."
+        }
+      },
+      "sonnet5": {
+        "requested_model": "claude-sonnet-5",
+        "served_model": "claude-sonnet-5",
+        "verified": true,
+        "input_tokens": 2861,
+        "output_tokens": 12757,
+        "cache_read_tokens": 22898,
+        "cache_create_tokens": 6475,
+        "duration_s": 143.9,
+        "cost_usd_std": 0.2311,
+        "cost_usd_intro": 0.1541,
+        "score": {
+          "findings": 13,
+          "verdict": "VETO",
+          "caught_planted": true,
+          "note": "+4 vs default; CONVERGED onto Opus's default strengths (unknown-role-should-deny, permission, boundary, first-match ordering)."
+        }
+      }
+    }
+  ],
+  "totals": {
+    "opus48": {
+      "out": 35667,
+      "dur_s": 468.2,
+      "cost_std": 1.0094,
+      "cost_intro": 0.0
+    },
+    "sonnet5": {
+      "out": 52170,
+      "dur_s": 570.7,
+      "cost_std": 0.9019,
+      "cost_intro": 0.6012
+    }
+  },
+  "all_models_verified": true
+}

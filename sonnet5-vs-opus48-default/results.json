@@ -1,0 +1,151 @@
+{
+  "id": "sonnet5-vs-opus48-default",
+  "title": "Sonnet 5 vs Opus 4.8 \u2014 default effort",
+  "date": "2026-07-01",
+  "effort": "default (Claude Code default, held equal on both arms)",
+  "arms": {
+    "opus48": "claude-opus-4-8",
+    "sonnet5": "claude-sonnet-5"
+  },
+  "verified_via": "claude-code modelUsage billing telemetry",
+  "pricing_note": "Sonnet 5 standard $3/$15, intro $2/$10 through 2026-08-31; Opus 4.8 $5/$25 per MTok. Costs normalized to official published rates.",
+  "headline": "Cheaper per token != cheaper per task: at matched effort Sonnet 5 emitted 1.56x more output, so it was only ~5% cheaper at standard pricing (37% under intro).",
+  "tasks": [
+    {
+      "id": "A",
+      "name": "Brownfield gotcha catch",
+      "type": "objective (3 seeded defects + real Apolaki auth code)",
+      "opus48": {
+        "requested_model": "claude-opus-4-8",
+        "served_model": "claude-opus-4-8",
+        "verified": true,
+        "input_tokens": 2738,
+        "output_tokens": 5311,
+        "cache_read_tokens": 14839,
+        "cache_create_tokens": 2736,
+        "duration_s": 66.2,
+        "cost_usd_std": 0.171,
+        "cost_usd_intro": null,
+        "score": {
+          "defects": 8,
+          "seeded_caught": "3/3",
+          "false_positives": 0,
+          "verdict": "NEEDS-FIX",
+          "note": "core 3 + unseeded IDOR + matrix-bypass + consent-purpose; ALSO null-deref & brittle ===true. Most exhaustive, in fewer words."
+        }
+      },
+      "sonnet5": {
+        "requested_model": "claude-sonnet-5",
+        "served_model": "claude-sonnet-5",
+        "verified": true,
+        "input_tokens": 2815,
+        "output_tokens": 7115,
+        "cache_read_tokens": 22898,
+        "cache_create_tokens": 6353,
+        "duration_s": 79.3,
+        "cost_usd_std": 0.1459,
+        "cost_usd_intro": 0.0972,
+        "score": {
+          "defects": 6,
+          "seeded_caught": "3/3",
+          "false_positives": 0,
+          "verdict": "NEEDS-FIX",
+          "note": "core 3 + unseeded IDOR + matrix-bypass + consent-purpose."
+        }
+      }
+    },
+    {
+      "id": "B",
+      "name": "Shift-left LLD design",
+      "type": "rubric (14 items)",
+      "opus48": {
+        "requested_model": "claude-opus-4-8",
+        "served_model": "claude-opus-4-8",
+        "verified": true,
+        "input_tokens": 2738,
+        "output_tokens": 7608,
+        "cache_read_tokens": 14839,
+        "cache_create_tokens": 2779,
+        "duration_s": 104.3,
+        "cost_usd_std": 0.2287,
+        "cost_usd_intro": null,
+        "score": {
+          "rubric": "14/14",
+          "note": "Tighter numeric NFR budgets; data-minimization (discard PII post-OCR); every test wired to a deploy-gate."
+        }
+      },
+      "sonnet5": {
+        "requested_model": "claude-sonnet-5",
+        "served_model": "claude-sonnet-5",
+        "verified": true,
+        "input_tokens": 2815,
+        "output_tokens": 15191,
+        "cache_read_tokens": 22898,
+        "cache_create_tokens": 6396,
+        "duration_s": 157.9,
+        "cost_usd_std": 0.2672,
+        "cost_usd_intro": 0.1781,
+        "score": {
+          "rubric": "14/14",
+          "note": "Richer PH-domain edges: co-op/prepaid meters, Tagalog/English OCR, fraud-via-edit, OCR-vendor DPA, implausible-value ranges."
+        }
+      }
+    },
+    {
+      "id": "C",
+      "name": "Adversarial gate verifier",
+      "type": "objective (planted fail-open bug)",
+      "opus48": {
+        "requested_model": "claude-opus-4-8",
+        "served_model": "claude-opus-4-8",
+        "verified": true,
+        "input_tokens": 2738,
+        "output_tokens": 5994,
+        "cache_read_tokens": 14839,
+        "cache_create_tokens": 2741,
+        "duration_s": 80.5,
+        "cost_usd_std": 0.1881,
+        "cost_usd_intro": null,
+        "score": {
+          "findings": 11,
+          "verdict": "VETO",
+          "caught_planted": true,
+          "unique": "case-sensitive method -> fail-open; ReDoS; policy-author vs runtime role-normalization mismatch."
+        }
+      },
+      "sonnet5": {
+        "requested_model": "claude-sonnet-5",
+        "served_model": "claude-sonnet-5",
+        "verified": true,
+        "input_tokens": 2815,
+        "output_tokens": 7108,
+        "cache_read_tokens": 22898,
+        "cache_create_tokens": 6358,
+        "duration_s": 82.3,
+        "cost_usd_std": 0.1458,
+        "cost_usd_intro": 0.0972,
+        "score": {
+          "findings": 9,
+          "verdict": "VETO",
+          "caught_planted": true,
+          "unique": "stateful g/y regex -> nondeterministic authz (the subtlest bug in the lab); uncaught-exception fails open."
+        }
+      }
+    }
+  ],
+  "totals": {
+    "opus48": {
+      "out": 18913,
+      "dur_s": 251.0,
+      "cost_std": 0.5878,
+      "cost_intro": 0.0
+    },
+    "sonnet5": {
+      "out": 29414,
+      "dur_s": 319.5,
+      "cost_std": 0.5589,
+      "cost_intro": 0.3725
+    }
+  },
+  "all_models_verified": true
+}

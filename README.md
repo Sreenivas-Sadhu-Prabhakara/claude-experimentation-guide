@@ -1,102 +1,61 @@
-# 📖 The Fable Field Guide
+# Kriya Model Lab
 
-A hands-on, interactive guide to using **Claude Fable 5** (`claude-fable-5`) well — the model, its quirks, the pitfalls people miss, and copy‑paste patterns you can drop into real work.
+**A re-runnable evaluation harness that decides which Claude model + effort tier
+[Kriya](https://github.com/Sreenivas-Sadhu-Prabhakara) should use for each agent
+role — with the real runs to prove it.**
 
-Built for someone who wants to *actually use* Fable, not just read marketing about it.
+This is an **engineering artifact, not a research write-up**. It answers one
+operational question, repeatedly and with evidence: *for a given agent role in an
+adversarial, spec-driven build pipeline, which model and effort earn their cost?*
+The hosted decks are the evidence; the machine-readable **routing recommendation**
+is the point.
 
-> **What is Fable?** Anthropic's most capable widely‑released model — built for the hardest reasoning and long‑horizon, multi‑step agentic work. 1M‑token context window, up to 128K output tokens, `$10` / `$50` per million input/output tokens. It behaves differently from the Opus family in a handful of important ways, and this guide is about exactly those differences.
-
----
-
-## Also in this repo — the Sonnet 5 vs Opus 4.8 Kriya lab
-
-An Apple **keynote-dark** presentation comparing **Claude Sonnet 5** (`claude-sonnet-5`)
-and **Claude Opus 4.8** (`claude-opus-4-8`) on a controlled **Apolaki** build run under
-the **Kriya** SDLC methodology. It's grounded in *real* headless runs (the served model
-was verified from Claude Code's billing telemetry, not the model's self-report); the
-generated code was discarded and only the measurements remain.
-
-- **Live:** [`/sonnet5-vs-opus48/`](sonnet5-vs-opus48/) → <https://sreenivas-sadhu-prabhakara.github.io/fable-field-guide/sonnet5-vs-opus48/>
-- Headline finding: cheaper *per token* ≠ cheaper *per task* — at matched effort Sonnet 5 emitted **1.56× more output**, so it was only ~5% cheaper at standard pricing (37% under intro pricing).
+🔗 **Live:** <https://sreenivas-sadhu-prabhakara.github.io/fable-field-guide/>
 
 ---
 
-## What's inside
+## What's here
 
 | Path | What it is |
 |------|------------|
-| **`index.html`** | The interactive guide. Open it in a browser — no build step, no API key. Has an **ELI5 ↔ technical** toggle, pitfall accordions, a "should I use Fable?" helper, copy‑paste prompt snippets, and a short quiz. |
-| **`examples/python/`** | Seven small, runnable Python scripts. Each one demonstrates **one** Fable‑specific behavior correctly (and shows the wrong way next to it). |
-| **`examples/typescript/`** | The same lessons in TypeScript. |
-| **`docs/PITFALLS.md`** | Every gotcha, written out long‑form with the fix. |
-| **`docs/PROMPTING.md`** | Prompting Fable — the behavioral shifts, plus ready‑to‑use system‑prompt snippets. |
-| **`docs/CHEATSHEET.md`** | One‑page quick reference. Print it. |
+| **`index.html`** | The hub — leads with the current [routing recommendation](routing/), then the labs. Reads `manifest.json` + `routing/routing.json`, so new labs appear automatically. |
+| **`routing/`** | **The output.** [`ROUTING.md`](routing/ROUTING.md) + [`routing.json`](routing/routing.json): role → model → effort, evidence-backed, ready to wire into Kriya's per-agent config. |
+| **`harness/`** | The engine — [`run-lab.sh`](harness/run-lab.sh) + [`grade.py`](harness/grade.py) + [README](harness/README.md). Runs a head-to-head via Claude Code (Max plan, no API key) and turns raw runs into an auditable `results.json`. Adding lab #4, #5, … is mechanical. |
+| **`shared/`** | One keynote design system (`keynote.css`) so every deck is one visual family. |
+| **`sonnet5-vs-opus48-default/`** | Lab — Sonnet 5 vs Opus 4.8 at **default** effort. `index.html` deck + `meta.json` + `scores.json` + generated `results.json`. |
+| **`sonnet5-vs-opus48-ultrathink/`** | Lab — the same, re-run at **max** effort (ultrathink). |
+| **`fable/`** | The original **Fable Field Guide** (Claude Fable 5 explainer). |
+| **`manifest.json`** | Generic index of every item; the hub renders from it. |
+
+## The trust model
+
+- The **served** model, tokens, cost and duration come from Claude Code's
+  `modelUsage` billing telemetry — **not** the model's self-report (models are
+  unreliable narrators about their own identity).
+- Only **distilled metrics** are committed. The models' generated answers/code
+  are discarded.
+- **Costs** are normalized to official published per-token rates.
+- Grading has an explicit human-in-the-loop step against published answer keys —
+  the *measurement* is automated and reproducible; the *judgement* is in-repo and
+  reviewable (`scores.json` per lab).
+
+## Add a lab
+
+```bash
+# 1. Run every task through every model (raw telemetry -> out/)
+harness/run-lab.sh suites/<name> out/<name> "claude-sonnet-5=sonnet5" "claude-opus-4-8=opus48"
+# 2. Grade -> results.json
+python3 harness/grade.py --raw out/<name> --meta <name>/meta.json --scores <name>/scores.json --out <name>/results.json
+# 3. Add it to manifest.json, refresh routing/, drop an index.html deck (reuse shared/keynote.css)
+```
+
+## Hosting
+
+Static site on GitHub Pages via [`.github/workflows/deploy.yml`](.github/workflows)
+— every push to `main` uploads the repo root, so each sibling folder is served at
+its own path. No build step.
 
 ---
 
-## Quick start
-
-### 1. Read the interactive guide (zero setup)
-
-```bash
-open index.html        # macOS
-# or just double-click index.html
-```
-
-Everything in `index.html` works offline. Start with the **ELI5** tab if you want the gentle version, flip to **Technical** when you're ready.
-
-### 2. Run the code (needs an API key)
-
-```bash
-# Python
-cd examples/python
-python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt
-cp .env.example .env          # then paste your key into .env
-export ANTHROPIC_API_KEY="sk-ant-..."
-python 01_hello_fable.py
-```
-
-```bash
-# TypeScript
-cd examples/typescript
-npm install
-cp .env.example .env          # then paste your key into .env
-export ANTHROPIC_API_KEY="sk-ant-..."
-npx tsx 01_hello_fable.ts
-```
-
-> Get a key at <https://console.anthropic.com>. **Heads up:** your organization must have **30‑day data retention** enabled — Fable 5 is *not* available under zero‑data‑retention and will return a `400` on every request otherwise. (That one trips people up; see the pitfalls.)
-
----
-
-## The 60‑second version
-
-If you read nothing else, these are the things that bite people moving to Fable from Opus/Sonnet:
-
-1. **Thinking is always on.** Don't send a `thinking` parameter. `thinking:{type:"disabled"}` → `400`. `budget_tokens` → `400`. Control how hard it thinks with `output_config.effort` (`low` → `max`), not a token budget.
-2. **You never get the raw chain of thought.** Set `display:"summarized"` for a readable summary; the default returns empty thinking blocks. When you continue a conversation **on Fable**, pass thinking blocks back *unchanged*.
-3. **Tokens count ~30% higher** than on Opus‑tier models, with a new tokenizer. Re‑measure with `count_tokens` — don't reuse old `max_tokens` budgets.
-4. **Requests can run for minutes.** Stream, set generous timeouts, and design for async check‑ins.
-5. **`stop_reason` can be `"refusal"`** on a successful `200`. Check it *before* reading `response.content`, or you'll crash on an empty array.
-6. **No assistant prefill.** Use `output_config.format` (structured outputs) or system‑prompt instructions instead.
-7. **Prompt it less.** Fable follows instructions literally and over‑prescriptive prompts *hurt* quality. State the goal and constraints; drop the step‑by‑step scaffolding.
-
-Full detail (and the *why*) lives in [`docs/PITFALLS.md`](docs/PITFALLS.md) and the interactive guide.
-
----
-
-## Deploying the guide (optional)
-
-The guide is a static site — same as a GitHub Pages demo. Push this repo and turn on Pages (serve from the repo root), and `index.html` is your live, shareable Fable explainer.
-
-```bash
-# after creating an empty GitHub repo:
-git remote add origin git@github.com:<you>/fable-field-guide.git
-git push -u origin main
-# then: Settings → Pages → Deploy from branch → main / root
-```
-
----
-
-*Built as a learning resource. All model facts reflect Fable 5 as documented by Anthropic; when in doubt, the live source of truth is the [Anthropic docs](https://platform.claude.com/docs).*
+*Built with Kriya's methodology on the Apolaki build. All model facts reflect the
+official Anthropic docs as of the run date; generated code discarded.*

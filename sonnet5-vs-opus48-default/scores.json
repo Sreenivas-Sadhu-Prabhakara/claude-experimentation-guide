@@ -1,0 +1,29 @@
+{
+  "tasks": [
+    {
+      "id": "A", "name": "Brownfield gotcha catch", "type": "objective (3 seeded defects + real Apolaki auth code)",
+      "score": {
+        "opus48":  { "defects": 8, "seeded_caught": "3/3", "false_positives": 0, "verdict": "NEEDS-FIX",
+                     "note": "core 3 + unseeded IDOR + matrix-bypass + consent-purpose; ALSO null-deref & brittle ===true. Most exhaustive, in fewer words." },
+        "sonnet5": { "defects": 6, "seeded_caught": "3/3", "false_positives": 0, "verdict": "NEEDS-FIX",
+                     "note": "core 3 + unseeded IDOR + matrix-bypass + consent-purpose." }
+      }
+    },
+    {
+      "id": "B", "name": "Shift-left LLD design", "type": "rubric (14 items)",
+      "score": {
+        "opus48":  { "rubric": "14/14", "note": "Tighter numeric NFR budgets; data-minimization (discard PII post-OCR); every test wired to a deploy-gate." },
+        "sonnet5": { "rubric": "14/14", "note": "Richer PH-domain edges: co-op/prepaid meters, Tagalog/English OCR, fraud-via-edit, OCR-vendor DPA, implausible-value ranges." }
+      }
+    },
+    {
+      "id": "C", "name": "Adversarial gate verifier", "type": "objective (planted fail-open bug)",
+      "score": {
+        "opus48":  { "findings": 11, "verdict": "VETO", "caught_planted": true,
+                     "unique": "case-sensitive method -> fail-open; ReDoS; policy-author vs runtime role-normalization mismatch." },
+        "sonnet5": { "findings": 9, "verdict": "VETO", "caught_planted": true,
+                     "unique": "stateful g/y regex -> nondeterministic authz (the subtlest bug in the lab); uncaught-exception fails open." }
+      }
+    }
+  ]
+}

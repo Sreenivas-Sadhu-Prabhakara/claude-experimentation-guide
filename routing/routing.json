@@ -1,0 +1,61 @@
+{
+  "version": "2026-07-01",
+  "generated_from": ["sonnet5-vs-opus48-default", "sonnet5-vs-opus48-ultrathink"],
+  "summary": "On Kriya-shaped Apolaki tasks, Opus 4.8 and Sonnet 5 are close. Opus is the stronger exhaustive reviewer/gate; Sonnet 5 matches it on design breadth and domain awareness at lower cost. Their defect blind spots are complementary. Effort raises recall but not gate verdicts.",
+  "recommendations": [
+    {
+      "role": "gate-verifier",
+      "kria_stage": "verify / independent gate (producer != critic)",
+      "model": "claude-opus-4-8",
+      "effort": "high",
+      "rationale": "Most exhaustive defect enumeration and fewest misses in both labs. Gate PASS/VETO was identical at default and max effort, so pay for high, not max, on the decision itself.",
+      "evidence": "Task C: 11 findings @default, 14 @max, correct VETO both times; Task A: 8-9 defects vs Sonnet's 6-7."
+    },
+    {
+      "role": "producer-design",
+      "kria_stage": "design / LLD / shift-left NFRs",
+      "model": "claude-sonnet-5",
+      "effort": "high",
+      "constraints": ["cap output tokens — 1.5-1.9x more verbose than Opus at matched effort"],
+      "rationale": "Matched Opus on rubric coverage with richer real-world/domain modeling; cheaper per task (esp. intro pricing). Its verbosity is the thing to control.",
+      "evidence": "Task B: 14/14 rubric both; Sonnet added PH-specific edges (co-op/prepaid meters, Tagalog OCR, fraud-via-edit, vendor DPA)."
+    },
+    {
+      "role": "producer-code",
+      "kria_stage": "build / brownfield implementation",
+      "model": "claude-opus-4-8",
+      "effort": "high",
+      "rationale": "Tighter, more minimal output and a data-minimization instinct; caught more brownfield gotchas (incl. null-safety, brittle checks) in fewer tokens.",
+      "evidence": "Task A: Opus found the most valid defects with lower verbosity."
+    },
+    {
+      "role": "high-volume-worker",
+      "kria_stage": "drafts / first-pass triage / breadth sweeps (low-stakes, non-gate)",
+      "model": "claude-sonnet-5",
+      "effort": "default",
+      "rationale": "Cost-efficient and fast enough with adequate recall for non-gate work; escalate to Opus for the gate.",
+      "evidence": "Default effort already produced correct verdicts and most core defects at ~5% (std) / 37% (intro) lower cost."
+    },
+    {
+      "role": "critical-audit",
+      "kria_stage": "highest-stakes security review / final audit",
+      "model": "ensemble: claude-opus-4-8 + claude-sonnet-5",
+      "effort": "max",
+      "rationale": "Blind spots are complementary and effort does NOT close them: at max effort Opus still missed the stateful-regex bug Sonnet caught. For critical audits, union both models' findings rather than trusting one.",
+      "evidence": "Task C: Sonnet uniquely caught stateful g/y regex nondeterminism at both effort levels; Opus never did, even at max."
+    }
+  ],
+  "principles": [
+    "Pay for max effort on ENUMERATION (audits, exhaustive review), not on binary PASS/VETO — verdicts were effort-robust.",
+    "Cap Sonnet 5 output; its cheaper tokens only pay off once verbosity (1.5-1.9x) is controlled.",
+    "For the highest-stakes reviews, ensemble beats any single model — blind spots are model-characteristic, not effort-limited.",
+    "Front-load Sonnet-heavy work before 2026-08-31 while intro pricing ($2/$10) makes it ~37-40% cheaper."
+  ],
+  "caveats": [
+    "Single run per task — signal, not a benchmark.",
+    "Graded against published answer keys by the author, not a blind expert panel.",
+    "Effort held EQUAL across arms (identical directive), not pinned to a literal 'max' knob.",
+    "Sonnet 5 was < 2 days old at test time; behaviour/routing still settling.",
+    "Costs normalized to official published rates, not Claude Code's internal cost table."
+  ]
+}

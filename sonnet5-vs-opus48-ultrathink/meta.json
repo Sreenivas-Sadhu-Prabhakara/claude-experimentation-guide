@@ -1,0 +1,9 @@
+{
+  "id": "sonnet5-vs-opus48-ultrathink",
+  "title": "Sonnet 5 vs Opus 4.8 — ultrathink (max effort)",
+  "date": "2026-07-01",
+  "effort": "max (identical 'ultrathink' max-rigor directive prepended to both arms)",
+  "arms": { "opus48": "claude-opus-4-8", "sonnet5": "claude-sonnet-5" },
+  "pricing_note": "Sonnet 5 standard $3/$15, intro $2/$10 through 2026-08-31; Opus 4.8 $5/$25 per MTok. Costs normalized to official published rates.",
+  "headline": "Max effort raised recall for ~1.7x the cost, but the gate verdicts never changed and Opus still missed Sonnet's stateful-regex bug — a model-characteristic blind spot effort didn't fix."
+}

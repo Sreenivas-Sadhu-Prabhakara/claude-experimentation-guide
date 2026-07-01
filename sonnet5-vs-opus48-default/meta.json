@@ -1,0 +1,9 @@
+{
+  "id": "sonnet5-vs-opus48-default",
+  "title": "Sonnet 5 vs Opus 4.8 — default effort",
+  "date": "2026-07-01",
+  "effort": "default (Claude Code default, held equal on both arms)",
+  "arms": { "opus48": "claude-opus-4-8", "sonnet5": "claude-sonnet-5" },
+  "pricing_note": "Sonnet 5 standard $3/$15, intro $2/$10 through 2026-08-31; Opus 4.8 $5/$25 per MTok. Costs normalized to official published rates.",
+  "headline": "Cheaper per token != cheaper per task: at matched effort Sonnet 5 emitted 1.56x more output, so it was only ~5% cheaper at standard pricing (37% under intro)."
+}
