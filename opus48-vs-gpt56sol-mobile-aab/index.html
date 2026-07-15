@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Opus 4.8 vs GPT 5.6 Sol - Mobile AAB Lab</title>
-<meta name="description" content="A Kriya lab slot for comparing Opus 4.8 and GPT 5.6 Sol on an end-to-end Flutter Android App Bundle build. Opus artifact complete; GPT run pending." />
+<meta name="description" content="A Kriya lab comparing Opus 4.8 and GPT 5.6 Sol on an end-to-end Flutter Android App Bundle build. Both signed AAB artifacts are complete and locally verified." />
 <link rel="stylesheet" href="../shared/keynote.css" />
 <style>
   .lab-wrap{max-width:1120px;margin:0 auto;padding:96px 22px 56px}
@@ -16,7 +16,20 @@
   .plain-table{width:100%;border-collapse:collapse;margin-top:14px}
   .plain-table th,.plain-table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
   .ok{color:#5be584;font-weight:800}
-  .pending{color:#ffce6a;font-weight:800}
+  .results{margin-top:34px;padding:26px 0}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+  .result-card{position:relative;border:1px solid var(--line);border-radius:8px;padding:24px;background:rgba(255,255,255,.025)}
+  .result-card.gpt{border-color:rgba(47,157,255,.42);background:linear-gradient(158deg,rgba(47,157,255,.12),rgba(138,107,255,.04) 72%,transparent)}
+  .result-card.opus{border-color:rgba(255,171,46,.36);background:linear-gradient(158deg,rgba(255,171,46,.1),rgba(255,90,95,.03) 72%,transparent)}
+  .result-label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:0}
+  .result-score{font-size:72px;font-weight:750;line-height:1;margin:14px 0 8px;font-variant-numeric:tabular-nums}
+  .result-score span{font-size:.32em;color:var(--muted);font-weight:600}
+  .result-facts{list-style:none;margin-top:18px;border-top:1px solid var(--line)}
+  .result-facts li{display:flex;justify-content:space-between;gap:18px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .result-facts li span:first-child{color:var(--muted)}
+  .result-facts li span:last-child{text-align:right;font-weight:650}
+  .result-note{margin-top:18px;color:var(--muted);font-size:14px;line-height:1.55;max-width:920px}
+  @media(max-width:720px){.result-grid{grid-template-columns:1fr}.result-score{font-size:58px}.result-facts li{align-items:flex-start}}
 </style>
 </head>
 <body>
@@ -27,63 +40,80 @@
     <h1 class="rev d1">Opus 4.8 <span style="color:var(--muted2);font-weight:600">vs</span><br><span class="grad">GPT 5.6 Sol</span></h1>
     <p class="lede rev d2" style="margin-top:24px">Task: build a polished offline-first Flutter app for filter coffee and deliver a signed release Android App Bundle ready for Play upload review.</p>
     <div class="callout rev d3">
-      <strong>Status:</strong> the Opus-side AAB is complete and locally verified. This page still does not claim GPT 5.6 Sol comparative performance, cost, or quality numbers because that exact run is pending.
+      <strong>Status:</strong> both sides produced signed Flutter Android App Bundles. GPT 5.6 Sol spent <strong>285,373 new tokens</strong> (non-cached input + output) in the Codex wrapper — the wrapper was interrupted after a repeated verbose transcript loop (8.9M total wire tokens), and the final GPT artifact was independently rebuilt and verified. The Opus build phase spent <strong>~432,615 new tokens</strong> up to its first signed AAB, on the same fresh-work basis.
     </div>
   </section>
 
   <section class="panel rev">
-    <h2>Opus Artifact</h2>
+    <h2>Artifacts</h2>
     <p class="body">The app is <strong>Giri Brew Companion</strong>: ratio calculator, staged timer, persistent brew log, settings, local-only storage, and no Android permissions declared by the app manifest.</p>
     <div class="evidence">
       <div class="panel">
-        <h3>Bundle</h3>
-        <p class="stat" style="font-size:34px">40M</p>
+        <h3>Opus Bundle</h3>
+        <p class="stat" style="font-size:34px">41.97 MB</p>
         <p class="mono-small">filter_brew_companion/build/app/outputs/bundle/release/app-release.aab</p>
       </div>
       <div class="panel">
-        <h3>Signature</h3>
+        <h3>GPT Bundle</h3>
+        <p class="stat" style="font-size:34px">41.45 MB</p>
+        <p class="mono-small">gpt56sol_filter_brew_companion/build/app/outputs/bundle/release/app-release.aab</p>
+      </div>
+      <div class="panel">
+        <h3>Signatures</h3>
         <p class="ok">jar verified</p>
-        <p class="body">Self-signed upload key, git-ignored.</p>
+        <p class="body">Both use self-signed upload keys; signing material is git-ignored.</p>
       </div>
       <div class="panel">
-        <h3>SHA-256</h3>
-        <p class="mono-small">ef24a591892bc10a0ced0c6bebfb39d1d16a5e7ff06848d1c0698fef9d1c8dfe</p>
+        <h3>GPT SHA-256</h3>
+        <p class="mono-small">3e1303033facc4c1eb4fed6ced99d4043c6236884b5045108a5ab08eca56c779</p>
       </div>
       <div class="panel">
-        <h3>Quality Gates</h3>
+        <h3>GPT Quality Gates</h3>
         <p class="ok">flutter analyze: clean</p>
-        <p class="ok">flutter test: 3 passed</p>
+        <p class="ok">flutter test: 8 passed</p>
       </div>
     </div>
   </section>
 
-  <section class="panel rev" style="margin-top:18px">
-    <h2>Comparison Status</h2>
-    <table class="plain-table">
-      <thead><tr><th>Arm</th><th>Status</th><th>Evidence</th></tr></thead>
-      <tbody>
-        <tr>
-          <td class="mono-small">gpt-5.6-sol</td>
-          <td class="pending">pending verified run</td>
-          <td>Local Codex-built artifact exists, but this repo does not claim it as GPT 5.6 Sol telemetry.</td>
-        </tr>
-        <tr>
-          <td class="mono-small">claude-opus-4-8</td>
-          <td class="ok">artifact complete</td>
-          <td>Signed AAB verified locally: hash recorded, <code>jarsigner</code> reports <code>jar verified</code>, and required bundle entries/ABIs are present.</td>
-        </tr>
-      </tbody>
-    </table>
+  <section class="results rev" aria-labelledby="results-title">
+    <div class="kicker"><span class="dot"></span> Completed head-to-head</div>
+    <h2 id="results-title">Results</h2>
+    <p class="lede">GPT 5.6 Sol leads the preliminary artifact audit by <strong>5 points</strong>. Both contenders shipped signed, verified Android App Bundles.</p>
+    <div class="result-grid">
+      <article class="result-card opus">
+        <div class="result-label">Claude Opus 4.8</div>
+        <div class="result-score">91 <span>/ 100</span></div>
+        <p class="ok">Artifact complete</p>
+        <ul class="result-facts">
+          <li><span>Release AAB</span><span>41.97 MB</span></li>
+          <li><span>Automated tests</span><span>3 passed</span></li>
+          <li><span>Static analysis</span><span>clean</span></li>
+          <li><span>New tokens (build)</span><span>~432,615</span></li>
+        </ul>
+      </article>
+      <article class="result-card gpt">
+        <div class="result-label">GPT 5.6 Sol</div>
+        <div class="result-score">96 <span>/ 100</span></div>
+        <p class="ok">Artifact complete · audit leader</p>
+        <ul class="result-facts">
+          <li><span>Release AAB</span><span>41.45 MB</span></li>
+          <li><span>Automated tests</span><span>8 passed</span></li>
+          <li><span>Static analysis</span><span>clean</span></li>
+          <li><span>New tokens (build)</span><span>285,373</span></li>
+        </ul>
+      </article>
+    </div>
+    <p class="result-note"><strong>Interpretation:</strong> GPT leads this objective artifact audit through broader automated coverage, cleaner code separation, and stronger release-readiness evidence. It is <strong>not</strong> a token-efficiency or cost verdict: the two token figures come from different harnesses (Claude Code session vs Codex CLI wrapper) with different cache accounting, the GPT run hit an interrupt loop, and the Opus session also did lab-authoring and grading — so the ~432,615 (Opus build phase) vs 285,373 (GPT) figures are the same order of magnitude but not a clean ratio. Opus's <em>full</em> session, including grading and pushes, was ~1.08M new tokens. Neither app received a recorded emulator-based usability or accessibility evaluation.</p>
   </section>
 
   <section class="panel rev" style="margin-top:18px">
-    <h2>Objective Checks Captured</h2>
+    <h2>Verification Evidence</h2>
     <table class="plain-table">
       <tbody>
         <tr><th>Signed AAB</th><td class="ok">present and verified</td></tr>
         <tr><th>Bundle contents</th><td>BundleConfig.pb, classes.dex, manifest, arm64-v8a, armeabi-v7a, x86_64</td></tr>
-        <tr><th>Offline posture</th><td>No app manifest <code>uses-permission</code> entries; storage via SharedPreferences.</td></tr>
-        <tr><th>Opus preliminary artifact audit</th><td>91 / 100. GPT 5.6 Sol remains unrun, so this is not a final head-to-head result.</td></tr>
+        <tr><th>Offline posture</th><td>No network/runtime permissions. GPT merged manifest includes one AndroidX app-defined internal receiver permission; storage via SharedPreferences.</td></tr>
+        <tr><th>Preliminary artifact audit</th><td>Opus: 91 / 100. GPT 5.6 Sol: 96 / 100. Scores cover objective artifact checks, not subjective product preference.</td></tr>
       </tbody>
     </table>
   </section>

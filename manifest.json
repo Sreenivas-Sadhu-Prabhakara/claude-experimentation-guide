@@ -8,18 +8,19 @@
       "id": "opus48-vs-gpt56sol-mobile-aab",
       "kind": "lab",
       "title": "Opus 4.8 vs GPT 5.6 Sol",
-      "subtitle": "Opus artifact complete · GPT pending",
+      "subtitle": "Both signed AAB artifacts complete",
       "path": "opus48-vs-gpt56sol-mobile-aab/",
       "results": "opus48-vs-gpt56sol-mobile-aab/results.json",
       "date": "2026-07-15",
-      "effort": "opus-complete",
+      "effort": "both-artifacts-complete",
       "models": ["claude-opus-4-8", "gpt-5.6-sol"],
       "card_stats": [
-        { "n": "40M", "k": "Opus signed .aab" },
-        { "n": "3", "k": "Flutter tests passing" },
+        { "n": "41.97 MB", "k": "Opus signed .aab" },
+        { "n": "41.45 MB", "k": "GPT signed .aab" },
+        { "n": "433k / 285k", "k": "Opus / GPT build tokens" },
         { "n": "0", "k": "fabricated comparison numbers" }
       ],
-      "blurb": "The Opus-side filter-coffee Flutter app is complete through a signed, jarsigner-verified Android App Bundle. GPT 5.6 Sol remains honestly pending until that exact run has real evidence."
+      "blurb": "Both contenders produced real signed Flutter Android App Bundles. GPT leads the preliminary objective artifact audit 96-91. Build-phase new tokens were ~432,615 (Opus) vs 285,373 (GPT) across two different harnesses — the same order of magnitude, so no clean token-efficiency winner is claimed."
     },
     {
       "id": "fable5-vs-opus48-burnzone",

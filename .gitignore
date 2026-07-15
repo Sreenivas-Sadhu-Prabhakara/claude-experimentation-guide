@@ -35,3 +35,4 @@ harness/suites/**/ANSWER-KEYS.md
 
 # Lab-local app builds live in their own repo, not in the hub (hub keeps distilled results)
 opus48-vs-gpt56sol-mobile-aab/filter_brew_companion/
+opus48-vs-gpt56sol-mobile-aab/gpt56sol_filter_brew_companion/

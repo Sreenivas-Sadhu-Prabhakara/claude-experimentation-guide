@@ -1,11 +1,11 @@
 # Shared build brief — "Filter Coffee Brew Companion"
 
-> **Run status (read this first).** As of 2026-07-15 a **real, `jarsigner`-verified signed
-> `.aab` has been built locally against this brief** — the app and its artifact exist and
-> are verifiable. But the **named model columns are still pending**: neither the Claude
-> Opus 4.8 run nor a GPT 5.6 Sol run has **telemetry-verified served-model evidence** in
-> this workspace, and no comparative numbers are claimed. No benchmark is fabricated. This
-> brief is published so each side can be re-run under verified telemetry and graded.
+> **Run status (read this first).** As of 2026-07-15 both named arms have produced real,
+> `jarsigner`-verified signed `.aab` artifacts locally against this brief. The GPT 5.6 Sol
+> arm has a captured Codex wrapper token count (285,373). The GPT wrapper was interrupted
+> after a repeated verbose transcript loop, so the final GPT artifact evidence is based on
+> an independent rebuild and verification of the project it created. No benchmark is
+> fabricated.
 
 > This is the **byte-identical prompt** each contender receives. It is a real product
 > brief, not a leading spec: it states outcomes and constraints, and leaves the

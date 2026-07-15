@@ -1,10 +1,9 @@
 # Objective grading rubric — 100 points
 
-> **Run status.** A **preliminary self-audit** of the locally-built app artifact exists
-> (a real, `jarsigner`-verified `.aab`). It is **not** a final Opus 4.8 vs GPT 5.6 Sol
-> grade: neither **named** arm has telemetry-verified served-model evidence in this
-> workspace, so the head-to-head columns carry **no score** — only a "not run" marker.
-> A score is claimed only where a telemetry-verified run exists.
+> **Run status.** A **preliminary artifact audit** exists for both locally-built app
+> artifacts. Each arm produced a real, `jarsigner`-verified `.aab`; the GPT arm also has a
+> captured Codex wrapper token count (285,373). These are objective artifact checks, not a
+> subjective product-preference verdict.
 
 > Every criterion is **checkable against the delivered repo and artifact**. Sections 1–5
 > and 7 are fully objective (a passing command, a file, a verified signature). Section 6

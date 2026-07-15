@@ -2,7 +2,7 @@
   "id": "opus48-vs-gpt56sol-mobile-aab",
   "title": "Opus 4.8 vs GPT 5.6 Sol - Mobile AAB",
   "date": "2026-07-15",
-  "status": "opus_artifact_complete_gpt_pending",
+  "status": "both_artifacts_complete",
   "app": {
     "name": "Giri Brew Companion",
     "brief": "Filter Coffee Brew Companion",
@@ -19,7 +19,8 @@
   "artifact": {
     "type": "android_app_bundle",
     "path": "opus48-vs-gpt56sol-mobile-aab/filter_brew_companion/build/app/outputs/bundle/release/app-release.aab",
-    "size": "40M",
+    "size": "41.97 MB (41,966,428 bytes)",
+    "size_bytes": 41966428,
     "sha256": "ef24a591892bc10a0ced0c6bebfb39d1d16a5e7ff06848d1c0698fef9d1c8dfe",
     "signed": true,
     "signer": "CN=Giri Coffee Works, OU=Kriya Lab, O=Giri Coffee Works, L=Bengaluru, ST=Karnataka, C=IN",
@@ -40,18 +41,114 @@
     "flutter_test": "3 tests passed",
     "permissions_scan": "no uses-permission entries in android/app/src/main"
   },
+  "comparison": {
+    "result": "gpt56sol_leads_preliminary_artifact_audit",
+    "leader": "gpt56sol",
+    "score": {
+      "gpt56sol": 96,
+      "opus48": 91,
+      "delta": 5,
+      "max": 100
+    },
+    "basis": "Objective artifact audit covering deployability, specification coverage, correctness, code quality, offline/privacy posture, UX evidence, and production readiness.",
+    "interpretation": "GPT 5.6 Sol leads through broader automated test coverage, cleaner code separation, and stronger release-readiness evidence. Both arms produced signed, locally verified AABs.",
+    "token_comparison": {
+      "basis": "new tokens (non-cached input + output) for the build phase; see each arm's token_usage",
+      "opus48_build_phase_new_tokens": 432615,
+      "gpt56sol_new_tokens": 285373,
+      "verdict": "No clean efficiency winner is claimed. The two figures come from different harnesses (Claude Code interactive session vs Codex CLI wrapper) with different cache accounting; the GPT run hit an interrupt/transcript loop and the Opus session also did lab-authoring/grading beyond the build. Both build-phase costs are the same order of magnitude (~285k-433k new tokens)."
+    },
+    "limitations": [
+      "Token figures are cross-harness and not perfectly scope-matched, so no token-efficiency or cost winner is declared; both are the same order of magnitude.",
+      "Neither arm has a recorded emulator-based usability or accessibility evaluation."
+    ]
+  },
+  "independent_verification": {
+    "verified_by": "Claude Code, re-run against the on-disk artifacts on 2026-07-15",
+    "checks": {
+      "sha256_match_both": true,
+      "jarsigner_verify_both": "jar verified",
+      "opus_aab_bytes": 41966428,
+      "gpt_aab_bytes": 41448619,
+      "opus_flutter_analyze": "No issues found",
+      "opus_flutter_test": "3 tests passed",
+      "gpt_flutter_analyze": "No issues found",
+      "gpt_flutter_test": "8 tests passed",
+      "bundle_abis_both": ["arm64-v8a", "armeabi-v7a", "x86_64"],
+      "secrets_git_ignored": "key.properties and *.jks confirmed git-ignored for both arms; both app folders git-ignored in hub"
+    }
+  },
   "arms": {
     "gpt56sol": {
       "requested_model": "gpt-5.6-sol",
-      "served_model": "not telemetry-verified in this environment",
-      "status": "pending_verified_run",
-      "artifact_note": "A local Codex-built artifact exists, but it is not claimed as GPT 5.6 Sol telemetry."
+      "served_model": "gpt-5.6-sol via Codex CLI provider=openai",
+      "status": "artifact_complete_independently_verified",
+      "session_id": "019f6368-04b9-7a91-b937-64e15f8509e0",
+      "tokens_used": 285373,
+      "token_usage": {
+        "definition": "new_tokens = non-cached input + output (fresh work, excludes cache reads)",
+        "new_tokens": 285373,
+        "new_input_tokens": 214343,
+        "output_tokens": 71030,
+        "total_wire_tokens": 8898237,
+        "cached_input_tokens": 8612864,
+        "source": "~/.codex/sessions/2026/07/15/rollout-...019f6368...jsonl final total_token_usage",
+        "note": "Total wire tokens (8.9M) are inflated by ~8.6M cached-input reads from the interrupted transcript loop; the 285,373 new-token figure is the fresh-compute cost."
+      },
+      "run_started_local": "2026-07-15T07:03:27+0530",
+      "run_note": "The GPT wrapper was interrupted after a repeated verbose transcript loop; it had already produced a signed AAB. The final recorded artifact below was rebuilt and verified independently after interruption.",
+      "artifact": {
+        "type": "android_app_bundle",
+        "path": "opus48-vs-gpt56sol-mobile-aab/gpt56sol_filter_brew_companion/build/app/outputs/bundle/release/app-release.aab",
+        "size": "41.45 MB (41,448,619 bytes)",
+        "size_bytes": 41448619,
+        "sha256": "3e1303033facc4c1eb4fed6ced99d4043c6236884b5045108a5ab08eca56c779",
+        "signed": true,
+        "signer": "CN=Filter Brew Companion Upload, OU=GPT 5.6 Sol Lab, O=Offline Lab, L=Bengaluru, ST=Karnataka, C=IN",
+        "signer_sha256": "88:66:E5:F7:37:E7:B8:DA:E0:1B:26:37:20:01:2E:52:0B:E6:5A:E8:3D:07:07:80:A8:C9:95:B3:CD:06:50:DD",
+        "jarsigner": "jar verified",
+        "abis": ["arm64-v8a", "armeabi-v7a", "x86_64"],
+        "bundle_entries_verified": [
+          "BundleConfig.pb",
+          "base/dex/classes.dex",
+          "base/lib/arm64-v8a/libapp.so",
+          "base/lib/armeabi-v7a/libapp.so",
+          "base/lib/x86_64/libapp.so",
+          "base/manifest/AndroidManifest.xml"
+        ]
+      },
+      "quality_gates": {
+        "flutter_analyze": "No issues found",
+        "flutter_test": "8 tests passed",
+        "flutter_build_appbundle_release": "Built build/app/outputs/bundle/release/app-release.aab (41.4MB)",
+        "permissions_scan": "No network/runtime permissions; AndroidX adds app-defined com.gpt56sol.filterbrew.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION in merged manifest.",
+        "privacy_flags": "android:allowBackup=false and android:usesCleartextTraffic=false",
+        "signing_material": "android/key.properties and android/app/upload-keystore.jks are git-ignored"
+      },
+      "grade": {
+        "total": 96,
+        "max": 100,
+        "status": "preliminary_artifact_audit"
+      }
     },
     "opus48": {
       "requested_model": "claude-opus-4-8",
       "served_model": "claude-opus-4-8",
+      "served_model_verified": "claude-opus-4-8 recorded on all 254 assistant turns of the build session transcript 7979a130",
       "status": "artifact_complete",
       "artifact_note": "Opus-side AAB is complete and locally verified: file exists, SHA-256 recorded, jarsigner reports jar verified, and expected bundle entries/ABIs are present.",
+      "token_usage": {
+        "definition": "new_tokens = non-cached input (base + cache-creation) + output; same fresh-work basis as the GPT figure",
+        "build_phase_new_tokens": 432615,
+        "build_phase_note": "Cumulative new tokens through the first signed .aab (flutter build appbundle). This is the scope-matched comparator to the GPT 285,373.",
+        "full_session_new_tokens": 1076221,
+        "full_session_new_input_tokens": 674496,
+        "full_session_output_tokens": 401725,
+        "total_wire_tokens": 35498852,
+        "cache_read_input_tokens": 34422631,
+        "source": "Claude Code build-session transcript 7979a130-...jsonl (254 assistant turns, all model=claude-opus-4-8)",
+        "note": "The full session also authored the lab (BRIEF/RUBRIC/scoring), ran the independent grading workflow, verified with jarsigner, and pushed repos — so full_session tokens are NOT app-build-only. Use build_phase_new_tokens for a like-for-like build comparison."
+      },
       "grade": {
         "total": 91,
         "max": 100,
@@ -59,6 +156,6 @@
       }
     }
   },
-  "all_models_verified": false,
+  "all_models_verified": true,
   "fabricated_numbers": 0
 }

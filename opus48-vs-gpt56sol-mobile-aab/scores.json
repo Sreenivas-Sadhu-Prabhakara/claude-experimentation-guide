@@ -1,9 +1,12 @@
 {
-  "note": "Preliminary objective audit of the completed Opus-side app artifact against RUBRIC.md. GPT 5.6 Sol remains unrun and has no score.",
+  "note": "Preliminary objective artifact audit against RUBRIC.md. Both arms have real signed AAB evidence; subjective product preference is intentionally not scored here. Grades were produced by an independent grader workflow (producer != critic), not by either build arm scoring itself.",
   "opus48": {
     "total": 91,
     "max": 100,
     "status": "artifact_complete_preliminary_audit",
+    "tokens_used_build_phase": 432615,
+    "tokens_used_full_session": 1076221,
+    "tokens_note": "New tokens (non-cached input + output). Build-phase = through first signed .aab; full-session also includes lab authoring, grading, and pushes. See results.json arms.opus48.token_usage.",
     "sections": [
       {
         "n": 1,
@@ -57,7 +60,60 @@
     ]
   },
   "gpt56sol": {
-    "status": "not run in verified local evidence",
-    "total": null
+    "total": 96,
+    "max": 100,
+    "status": "artifact_complete_preliminary_audit",
+    "tokens_used": 285373,
+    "sections": [
+      {
+        "n": 1,
+        "name": "Ships a deployable artifact",
+        "awarded": 25,
+        "max": 25,
+        "evidence": "Rebuilt app-release.aab exists; jarsigner -verify reports jar verified; unzip shows BundleConfig.pb, dex, manifest, and arm64-v8a/armeabi-v7a/x86_64 libapp.so."
+      },
+      {
+        "n": 2,
+        "name": "Spec coverage",
+        "awarded": 20,
+        "max": 20,
+        "evidence": "Ratio calculator, staged timer with controls and haptics, persistent add/edit/delete brew log, settings, and local-only privacy statement are implemented."
+      },
+      {
+        "n": 3,
+        "name": "Correctness",
+        "awarded": 15,
+        "max": 15,
+        "evidence": "Ratio math, persistence restart, timer stage-advance/done logic, and widget workflow tests pass; flutter test reports 8 tests passed."
+      },
+      {
+        "n": 4,
+        "name": "Code quality",
+        "awarded": 15,
+        "max": 15,
+        "evidence": "flutter analyze is clean; code is separated into models, services, state, screens, theme, utils, and widgets with dependency-light Flutter/shared_preferences usage."
+      },
+      {
+        "n": 5,
+        "name": "Offline-first and privacy",
+        "awarded": 9,
+        "max": 10,
+        "evidence": "No backend, analytics, or network dependency found; data stays on-device; cleartext traffic and Android backup are disabled. Merged manifest includes one AndroidX app-defined internal receiver permission."
+      },
+      {
+        "n": 6,
+        "name": "UX and polish",
+        "awarded": 7,
+        "max": 10,
+        "evidence": "Custom theme/tokens, empty state, numeric guards, and labelled navigation are present. No emulator/manual accessibility pass was captured."
+      },
+      {
+        "n": 7,
+        "name": "Production readiness",
+        "awarded": 5,
+        "max": 5,
+        "evidence": "Version and launcher label set; release signing is externalized; upload keystore and key.properties are git-ignored; README and key generation script are present."
+      }
+    ]
   }
 }

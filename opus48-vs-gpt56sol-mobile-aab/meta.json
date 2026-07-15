@@ -2,12 +2,12 @@
   "id": "opus48-vs-gpt56sol-mobile-aab",
   "title": "Opus 4.8 vs GPT 5.6 Sol - Mobile AAB",
   "date": "2026-07-15",
-  "effort": "Opus artifact complete; GPT run pending",
+  "effort": "Both artifacts complete; both token counts captured",
   "app": "Filter Coffee Brew Companion",
   "framework": "Flutter",
   "arms": {
     "opus48": "claude-opus-4-8",
     "gpt56sol": "gpt-5.6-sol"
   },
-  "headline": "The Opus-side Flutter app artifact is complete: a signed Android App Bundle is present locally and passes verification. The GPT 5.6 Sol column remains pending until that exact run has real evidence."
+  "headline": "GPT 5.6 Sol leads the preliminary objective artifact audit 96-91; both contenders produced signed, locally verified Android App Bundles. Build-phase new tokens were ~432,615 (Opus) vs 285,373 (GPT) — same order of magnitude across two different harnesses, so no clean token-efficiency winner is claimed."
 }
