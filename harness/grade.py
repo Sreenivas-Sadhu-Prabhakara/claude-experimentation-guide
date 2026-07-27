@@ -22,6 +22,7 @@ import argparse, glob, json, os
 
 # official published $/1M-token rates (input, output, cache-read, cache-write)
 RATES = {
+    "claude-opus-5":         {"in": 5.0, "out": 25.0, "cr": 0.5,  "cw": 6.25},
     "claude-opus-4-8":       {"in": 5.0, "out": 25.0, "cr": 0.5,  "cw": 6.25},
     "claude-sonnet-5":       {"in": 3.0, "out": 15.0, "cr": 0.3,  "cw": 3.75},
     "claude-sonnet-5-intro": {"in": 2.0, "out": 10.0, "cr": 0.2,  "cw": 2.5},

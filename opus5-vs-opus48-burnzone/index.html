@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Opus 5 vs Opus 4.8 — building BurnZone via Kriya</title>
+<meta name="description" content="A controlled head-to-head: Claude Opus 5 vs Claude Opus 4.8 on four Kriya-role tasks over the real BurnZone production brownfield. Same suite and keys as the Fable lab, same $5/$25 price tier — real runs, billing-telemetry verified, code discarded." />
+<link rel="stylesheet" href="../shared/keynote.css" />
+<style>
+  /* Opus 5 channel = emerald (Opus 4.8 keeps amber). Repurposes the blue channel's slots. */
+  :root{ --o5:#00d5a8; --o5-2:#4ae3c4; --o5-ink:#7cf0d4; }
+  .grad-o5{background:linear-gradient(108deg,var(--o5),var(--o5-2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .card.o5{background:linear-gradient(158deg,rgba(0,213,168,.16),rgba(74,227,196,.05) 72%,transparent);border-color:rgba(0,213,168,.36)}
+  table.sc td.n,table.sc th.n{color:var(--o5-ink)}
+  .fill.o5{background:linear-gradient(90deg,var(--o5),var(--o5-2))}
+  .minihead.n{color:var(--o5-ink)}
+  ul.clean.o5v li::before{background:linear-gradient(90deg,var(--o5),var(--o5-2))}
+  .tag.o5{background:rgba(0,213,168,.15);color:var(--o5-ink);border-color:rgba(0,213,168,.32)}
+  .tag.served{background:rgba(61,220,132,.14);color:#6ee6a0;border-color:rgba(61,220,132,.3)}
+  .tag.same{background:rgba(255,214,10,.13);color:#ffe08a;border-color:rgba(255,214,10,.3)}
+  .bignum{font-size:clamp(46px,9vw,120px);font-weight:700;letter-spacing:-.045em;line-height:.9;font-variant-numeric:tabular-nums}
+  .ceil{border-left:2px solid rgba(0,213,168,.5);padding-left:18px;margin-top:18px}
+</style>
+</head>
+<body>
+<a class="backlink" href="../">← all labs</a>
+<div class="counter" id="counter"></div>
+<div class="topbar" id="topbar"></div>
+<nav class="rail" id="rail"></nav>
+<div class="hint rev"><kbd>↓</kbd> or <kbd>→</kbd> to advance · <kbd>↑</kbd><kbd>←</kbd> back</div>
+
+<div class="deck" id="deck">
+
+  <!-- 1 · TITLE -->
+  <section class="slide" data-name="Title">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> A Kriya Lab · 27 July 2026</div>
+      <h1 class="rev d1"><span class="grad-o5">Opus 5</span><br><span style="color:var(--muted-2);font-weight:600">vs</span> <span class="grad-warm">Opus 4.8</span></h1>
+      <p class="lede rev d3" style="margin-top:30px">The successor arrives at <strong>exactly the same price</strong> — $5/$25 per MTok. No premium to justify, no tier to trade off. So the only question left is the honest one: <strong>does it actually build better software?</strong></p>
+      <p class="body rev d4" style="margin-top:22px">Same four <strong>Kriya</strong> SDLC roles, same <strong>BurnZone</strong> brownfield, same answer keys as the Fable lab · real headless runs on a Claude Max plan · served-model verified from billing telemetry · generated code discarded.</p>
+    </div>
+  </section>
+
+  <!-- 2 · THE QUESTION -->
+  <section class="slide" data-name="The question">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The question</div>
+      <h2 class="rev d1">When the upgrade is <span class="grad-o5">free</span>,<br>what is there left to decide?</h2>
+      <p class="lede rev d2">Every prior lab in this notebook asked a <em>price</em> question. Sonnet 5 was cheaper — was it good enough? Fable 5 was 2× dearer — was it worth it? Opus 5 is neither. It lands on Opus 4.8's exact rate card.</p>
+      <p class="lede rev d3" style="margin-top:22px;color:var(--ink)">So the question changes shape: not <em>"is it worth the premium"</em> but <strong>"is the extra token volume worth it"</strong> — because a model that thinks by default spends more even at an identical rate.</p>
+      <p class="body rev d4">And the answer turned out to depend entirely on <strong>what kind of deliverable the role produces</strong>.</p>
+    </div>
+  </section>
+
+  <!-- 3 · CONTENDERS -->
+  <section class="slide" data-name="Contenders">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The contenders · official specs</div>
+      <div class="versus rev d1">
+        <div class="card o5">
+          <span class="tag o5">SUCCESSOR · same tier</span>
+          <h3>Claude Opus 5</h3>
+          <ul class="spec">
+            <li><span>Price / MTok</span><span>$5 in · $25 out</span></li>
+            <li><span>Context</span><span>1M</span></li>
+            <li><span>Max output</span><span>128K</span></li>
+            <li><span>Thinking</span><span>adaptive — <strong>on by default</strong></span></li>
+            <li><span>Effort ladder</span><span>low → max</span></li>
+            <li><span>Cache minimum</span><span>512 tok</span></li>
+          </ul>
+        </div>
+        <div class="vs-mid">vs</div>
+        <div class="card opus">
+          <span class="tag">INCUMBENT · Kriya backbone</span>
+          <h3>Claude Opus 4.8</h3>
+          <ul class="spec">
+            <li><span>Price / MTok</span><span>$5 in · $25 out</span></li>
+            <li><span>Context</span><span>1M</span></li>
+            <li><span>Max output</span><span>128K</span></li>
+            <li><span>Thinking</span><span>adaptive — <strong>off by default</strong></span></li>
+            <li><span>Effort ladder</span><span>low → max</span></li>
+            <li><span>Cache minimum</span><span>1024 tok</span></li>
+          </ul>
+        </div>
+      </div>
+      <p class="foot rev d4">One row matters more than the rest: <strong>thinking defaults differ.</strong> Opus 5 reasons before answering unless told not to; Opus 4.8 does not unless told to. That single line is most of what follows.</p>
+    </div>
+  </section>
+
+  <!-- 4 · TEST BED -->
+  <section class="slide" data-name="Test bed">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The test bed</div>
+      <h2 class="rev d1">A real brownfield,<br>with <span class="grad-warm">real holes</span> in it.</h2>
+      <p class="lede rev d2">BurnZone is a live multi-tenant gym-SaaS — Express + TypeScript + Postgres, JWT + RBAC, <strong>~712 real member accounts</strong> in production. Not a benchmark fixture. The tasks come from its actual Kriya Stage-C dossier and its actual fix commit <span class="mono">7f7b986</span>.</p>
+      <div class="grid g2 rev d3" style="margin-top:22px">
+        <div class="panel">
+          <h3>The four roles</h3>
+          <ul class="clean o5v" style="margin-top:6px">
+            <li><strong>A · Security capture</strong> — 5 seeded-real defects, 2 of them CRITICAL, plus two planted false-positive traps</li>
+            <li><strong>B · Producer-code</strong> — a production bug with one correct minimal fix</li>
+            <li><strong>C · Architect</strong> — Stage-0 strangler plan, 16-item rubric</li>
+            <li><strong>D · Gate-verifier</strong> — a <em>planted fail-open</em>; correct answer is VETO</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Why reuse the Fable suite</h3>
+          <ul class="clean" style="margin-top:6px">
+            <li>Same prompts, same keys, same default effort as lab #3 — so Opus 5 lands <strong>directly comparable</strong> to Fable 5</li>
+            <li>Tasks A and D are security-flavoured — precisely where Fable's classifiers <strong>declined</strong></li>
+            <li>The keys are grounded in a shipped commit, not an opinion</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5 · METHOD -->
+  <section class="slide" data-name="Method">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Method · what makes this auditable</div>
+      <h2 class="rev d1">The model doesn't get to<br>tell us <span class="grad-o5">who it is.</span></h2>
+      <div class="grid g2 rev d2" style="margin-top:20px">
+        <div class="panel">
+          <h3>Measurement — automated</h3>
+          <ul class="clean" style="margin-top:6px">
+            <li>Both arms run the identical prompt file, in parallel, per task</li>
+            <li>Served model, tokens, cost and duration read from Claude Code's <span class="mono">modelUsage</span> billing telemetry</li>
+            <li>Costs re-normalized to <strong>official published rates</strong>, never the internal cost table</li>
+            <li>Only distilled metrics enter the repo — <strong>generated code is discarded</strong></li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Judgement — explicit, in-repo</h3>
+          <ul class="clean o5v" style="margin-top:6px">
+            <li>Objective keys written <em>before</em> the runs, from the real dossier</li>
+            <li>Every extra finding re-checked <strong>against the pasted source</strong> before being credited</li>
+            <li>False-positive traps scored in both directions</li>
+            <li><span class="mono">scores.json</span> ships beside the results so the grading is reviewable</li>
+          </ul>
+        </div>
+      </div>
+      <p class="foot rev d4">Models misreport their own identity — a <span class="mono">claude-sonnet-5</span> run once insisted it was 4.6. Billing telemetry is the only ground truth.</p>
+    </div>
+  </section>
+
+  <!-- 6 · VERIFIED -->
+  <section class="slide" data-name="Verified">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Verification · the first clean sweep</div>
+      <h2 class="rev d1"><span class="grad-o5">8 of 8</span> runs served<br>by the model we asked for.</h2>
+      <p class="lede rev d2">In the Fable lab this slide carried bad news: two of four Fable requests were silently re-served by Opus 4.8 because its classifiers declined the security prompts. Only half that lab was a real head-to-head.</p>
+      <div class="ceil rev d3">
+        <p class="lede" style="margin-top:0"><strong>Opus 5 declined nothing.</strong> Both security prompts — the brownfield auth audit and the adversarial gate verify — were served by <span class="mono">claude-opus-5</span> itself.</p>
+      </div>
+      <div class="grid g2 rev d4" style="margin-top:22px">
+        <div class="panel">
+          <span class="tag served">THIS LAB</span>
+          <p class="bignum grad-o5" style="margin-top:10px">4 / 4</p>
+          <p class="statsub">true head-to-head tasks</p>
+        </div>
+        <div class="panel">
+          <span class="tag same">LAB #3 · FABLE 5</span>
+          <p class="bignum" style="margin-top:10px;color:var(--muted)">2 / 4</p>
+          <p class="statsub">the other two fell back to Opus</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7 · THE CEILING -->
+  <section class="slide" data-name="The ceiling">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The awkward result</div>
+      <h2 class="rev d1">On the answer key,<br>it's a <span class="grad-warm">four-way tie.</span></h2>
+      <p class="lede rev d2">Both models hit the objective ceiling on <strong>every single task</strong>. There is no keyed defect either one missed.</p>
+      <div class="panel rev d3" style="margin-top:20px">
+        <table class="sc" style="margin-top:0">
+          <thead><tr><th>Task</th><th>Objective measure</th><th class="n">Opus 5</th><th class="o">Opus 4.8</th></tr></thead>
+          <tbody>
+            <tr><td>A · Security</td><td>seeded criticals caught</td><td class="n num">2 / 2</td><td class="o num">2 / 2</td></tr>
+            <tr><td>A · Security</td><td>keyed defects caught</td><td class="n num">5 / 5</td><td class="o num">5 / 5</td></tr>
+            <tr><td>B · Build</td><td>root cause + minimal fix</td><td class="n">correct</td><td class="o">correct</td></tr>
+            <tr><td>B · Build</td><td>invariants preserved</td><td class="n num">4 / 4</td><td class="o num">4 / 4</td></tr>
+            <tr><td>C · Design</td><td>rubric</td><td class="n num">16 / 16</td><td class="o num">16 / 16</td></tr>
+            <tr><td>D · Gate</td><td>verdict · planted bug</td><td class="n">VETO ✓</td><td class="o">VETO ✓</td></tr>
+            <tr><td>All</td><td>false positives</td><td class="n num">0</td><td class="o num">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot rev d4">A saturated key can't rank two strong models. So the honest move isn't to declare "no difference" — it's to go grade what the key <strong>doesn't</strong> cover.</p>
+    </div>
+  </section>
+
+  <!-- 8 · RESULT · SECURITY -->
+  <section class="slide" data-name="Result · Security">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Result · Task A · security capture</div>
+      <h2 class="rev d1">Same criticals.<br><span class="grad-o5">Two and a half times</span> the defects.</h2>
+      <p class="lede rev d2">Both caught all five keyed defects and both avoided the key's two false-positive traps. Past that point they diverge sharply.</p>
+      <div class="grid g2 rev d3" style="margin-top:20px">
+        <div class="panel">
+          <table class="sc" style="margin-top:0">
+            <thead><tr><th>Signal</th><th class="n">Opus 5</th><th class="o">Opus 4.8</th></tr></thead>
+            <tbody>
+              <tr><td>Seeded criticals</td><td class="n num">2 / 2</td><td class="o num">2 / 2</td></tr>
+              <tr><td>Valid defects</td><td class="n num">15</td><td class="o num">6</td></tr>
+              <tr><td>False positives</td><td class="n num">0</td><td class="o num">0</td></tr>
+              <tr><td>Output tokens</td><td class="n num">16,222</td><td class="o num">7,597</td></tr>
+              <tr><td>Wall-clock</td><td class="n num">200.7s</td><td class="o num">104.3s</td></tr>
+              <tr><td>Cost</td><td class="n num">$0.559</td><td class="o num">$0.267</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h3 class="minihead n">Only Opus 5 found — each verified against the source</h3>
+          <ul class="clean o5v" style="margin-top:6px">
+            <li><span class="mono">oauth_accounts</span> lookup is not tenant-scoped</li>
+            <li><span class="mono">/idtoken</span> has <strong>no try/catch</strong> — a throw becomes an unhandled rejection</li>
+            <li><span class="mono">roleResult.rows[0].id</span> dereferenced unguarded on two paths</li>
+            <li>Password length check is <strong>type-confusable</strong></li>
+            <li>Role changes never invalidate <strong>outstanding JWTs</strong></li>
+            <li>Audit write isn't atomic with the privilege change</li>
+          </ul>
+        </div>
+      </div>
+      <p class="foot rev d4">It also shipped <strong>per-finding confidence scores</strong> and explicitly flagged two things it <em>couldn't</em> verify from the excerpt rather than asserting them. Opus 4.8's one edge: it ranked cross-branch scoping as its own finding, where Opus 5 folded it into another.</p>
+    </div>
+  </section>
+
+  <!-- 9 · RESULT · BUILD -->
+  <section class="slide" data-name="Result · Build">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Result · Task B · producer-code</div>
+      <h2 class="rev d1">One correct fix.<br>Both got it. <span class="grad-warm">Ceiling reached.</span></h2>
+      <p class="lede rev d2">Identical diagnosis: <span class="mono">SELECT *</span> never emits the cross-table fields the Dart model reads, so missing keys parse to <span class="mono">null</span> → blank cards, 200, no error. Both shipped the correct tenant-safe <span class="mono">LEFT JOIN</span> with exact client aliases and all four invariants intact.</p>
+      <div class="grid g2 rev d3" style="margin-top:20px">
+        <div class="panel">
+          <table class="sc" style="margin-top:0">
+            <thead><tr><th>Signal</th><th class="n">Opus 5</th><th class="o">Opus 4.8</th></tr></thead>
+            <tbody>
+              <tr><td>Root cause</td><td class="n">correct</td><td class="o">correct</td></tr>
+              <tr><td>Fix correct</td><td class="n">✓</td><td class="o">✓</td></tr>
+              <tr><td>Invariants</td><td class="n num">4 / 4</td><td class="o num">4 / 4</td></tr>
+              <tr><td>Output tokens</td><td class="n num">8,484</td><td class="o num">5,645</td></tr>
+              <tr><td>Cost</td><td class="n num">$0.464</td><td class="o num">$0.258</td></tr>
+            </tbody>
+          </table>
+          <p class="foot" style="margin-top:14px">Verdict: <strong>TIE</strong> — and the cheaper model already reached the ceiling.</p>
+        </div>
+        <div class="panel">
+          <h3 class="minihead n">Opus 5's margin — real, but marginal</h3>
+          <ul class="clean o5v" style="margin-top:6px">
+            <li>Explained the <strong>ON-vs-WHERE trap</strong>: moving the tenant predicate into <span class="mono">WHERE</span> silently degrades the LEFT JOIN back to an INNER and re-drops rows</li>
+            <li>Added a <span class="mono">b.id DESC</span> tiebreaker — <span class="mono">created_at</span> alone isn't a total order, so rows repeat or vanish across pages — then flagged it as beyond-minimum and offered to drop it</li>
+            <li><strong>Ran a SQL parser on its own output</strong> to confirm it parses and projects all three client keys</li>
+          </ul>
+        </div>
+      </div>
+      <p class="foot rev d4">This is the slide that keeps Opus 4.8 in the routing table. When the deliverable is <em>one correct minimal fix</em>, extra reasoning has nowhere to go.</p>
+    </div>
+  </section>
+
+  <!-- 10 · RESULT · DESIGN -->
+  <section class="slide" data-name="Result · Design">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Result · Task C · architect</div>
+      <h2 class="rev d1">16 / 16 both.<br>Then Opus 5 closed the gap<br><span class="grad-o5">every model had left open.</span></h2>
+      <p class="lede rev d2">The rubric saturates — both arms max it. But one rubric item had been only <em>implicitly</em> satisfied by every arm in every prior lab: pinning a <strong>no-500 invariant</strong>. Opus 5 is the first to make it explicit, as invariant <span class="mono">I6 · Error taxonomy</span>.</p>
+      <div class="grid g2 rev d3" style="margin-top:20px">
+        <div class="panel">
+          <h3 class="minihead n">Opus 5 · off-rubric depth</h3>
+          <ul class="clean o5v" style="margin-top:6px">
+            <li><span class="mono">INTENDED</span>/<span class="mono">OBSERVED</span>/<span class="mono">SUSPECT</span> golden classification — SUSPECT goldens carry a <strong>companion red test</strong>, so the two known CRITICALs enter the net as red tests and can never be canonized</li>
+            <li>A <strong>mutation-score</strong> merge gate on auth middleware — because assertion <em>count</em> is gameable and mutation score isn't</li>
+            <li><strong>90-day</strong> traffic window for billing and cron routes: monthly jobs are invisible in a 30-day window</li>
+            <li>Hard caps as forcing functions — <span class="mono">UNDECIDED ≤ 10%</span>, <span class="mono">FINISH ≤ 12</span> "so triage doesn't become a roadmap"</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3 class="minihead">Opus 4.8 · its own standout</h3>
+          <ul class="clean" style="margin-top:6px">
+            <li>Authors the AuthZ matrix against <strong>intended policy, not observed behavior</strong> — so freezing the net can't enshrine the live auth bug</li>
+            <li><span class="mono">stale_flag_gate</span> with mandatory flag <span class="mono">expires_at</span></li>
+            <li>Reached 16/16 in <strong>one third</strong> the tokens</li>
+          </ul>
+          <table class="sc" style="margin-top:16px">
+            <thead><tr><th>Signal</th><th class="n">Opus 5</th><th class="o">Opus 4.8</th></tr></thead>
+            <tbody>
+              <tr><td>Rubric</td><td class="n num">16 / 16</td><td class="o num">16 / 16</td></tr>
+              <tr><td>Output tokens</td><td class="n num">17,881</td><td class="o num">6,055</td></tr>
+              <tr><td>Cost</td><td class="n num">$0.573</td><td class="o num">$0.217</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="foot rev d4">Widest token gap of the four tasks — <strong>2.95×</strong>. Worth it for a plan written once and executed for months; not for routine design.</p>
+    </div>
+  </section>
+
+  <!-- 11 · RESULT · GATE -->
+  <section class="slide" data-name="Result · Gate">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Result · Task D · gate-verifier</div>
+      <h2 class="rev d1">Both said VETO.<br>One said <span class="grad-o5">why it was worse.</span></h2>
+      <p class="lede rev d2">The planted bug: the guard checks only the <em>new</em> role, never the target's <em>current</em> one — so a Branch Admin can still demote the tenant's Super Admin. Both caught it. Both avoided the key's <span class="mono">req.role</span> false-positive trap.</p>
+      <div class="grid g2 rev d3" style="margin-top:20px">
+        <div class="panel">
+          <table class="sc" style="margin-top:0">
+            <thead><tr><th>Signal</th><th class="n">Opus 5</th><th class="o">Opus 4.8</th></tr></thead>
+            <tbody>
+              <tr><td>Verdict</td><td class="n">VETO ✓</td><td class="o">VETO ✓</td></tr>
+              <tr><td>Planted bug caught</td><td class="n">✓</td><td class="o">✓</td></tr>
+              <tr><td>Findings</td><td class="n num">6</td><td class="o num">3</td></tr>
+              <tr><td>False positives</td><td class="n num">0</td><td class="o num">0</td></tr>
+              <tr><td>Output tokens</td><td class="n num">9,135</td><td class="o num">6,898</td></tr>
+              <tr><td>Cost</td><td class="n num">$0.283</td><td class="o num">$0.227</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="panel">
+          <h3 class="minihead n">What Opus 5 ranked <em>above</em> the planted bug</h3>
+          <p class="body" style="margin-top:6px">That the authorization decision keys off the <strong>attacker-supplied request string</strong> rather than the role row the database already resolved — so the deny-list isn't closed, only narrowed.</p>
+          <p class="body" style="margin-top:12px;color:var(--o5-ink)">"CRIT-2 is not closed; it is narrowed to attackers who don't read the deny-list."</p>
+          <p class="body" style="margin-top:12px">Plus: non-atomic audit write leaving unlogged role changes reachable, an enumeration of prerequisites the patch assumes but never establishes, and a "required to flip this to PASS" checklist.</p>
+        </div>
+      </div>
+      <p class="foot rev d4">Only <strong>1.32×</strong> the tokens — the narrowest gap in the lab, and double the findings. The cheapest place to buy the upgrade.</p>
+    </div>
+  </section>
+
+  <!-- 12 · EFFICIENCY -->
+  <section class="slide" data-name="Efficiency">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Efficiency · output tokens per task</div>
+      <h2 class="rev d1">The gap isn't constant.<br>It tracks <span class="grad-o5">how much there is to think about.</span></h2>
+      <div class="bars rev d2" style="margin-top:26px">
+        <div><div class="minihead n">A · Security — Opus 5 · 16,222</div><div class="bar"><div class="fill o5" style="--w:91%"></div></div></div>
+        <div><div class="minihead">A · Security — Opus 4.8 · 7,597</div><div class="bar"><div class="fill op" style="--w:42%"></div></div></div>
+        <div><div class="minihead n">B · Build — Opus 5 · 8,484</div><div class="bar"><div class="fill o5" style="--w:47%"></div></div></div>
+        <div><div class="minihead">B · Build — Opus 4.8 · 5,645</div><div class="bar"><div class="fill op" style="--w:32%"></div></div></div>
+        <div><div class="minihead n">C · Design — Opus 5 · 17,881</div><div class="bar"><div class="fill o5" style="--w:100%"></div></div></div>
+        <div><div class="minihead">C · Design — Opus 4.8 · 6,055</div><div class="bar"><div class="fill op" style="--w:34%"></div></div></div>
+        <div><div class="minihead n">D · Gate — Opus 5 · 9,135</div><div class="bar"><div class="fill o5" style="--w:51%"></div></div></div>
+        <div><div class="minihead">D · Gate — Opus 4.8 · 6,898</div><div class="bar"><div class="fill op" style="--w:39%"></div></div></div>
+      </div>
+      <p class="foot rev d4">Ratio by task: <strong>2.95×</strong> on open-ended architecture · <strong>2.14×</strong> on exhaustive audit · <strong>1.50×</strong> on the single-answer build · <strong>1.32×</strong> on the gate. The more bounded the deliverable, the smaller the premium.</p>
+    </div>
+  </section>
+
+  <!-- 13 · ECONOMICS -->
+  <section class="slide" data-name="Economics">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Economics · normalized to published rates</div>
+      <h2 class="rev d1">1.94× the cost.<br>0× the <span class="grad-warm">price premium.</span></h2>
+      <p class="lede rev d2">This is the number that makes the lab interesting. Both models bill at <strong>$5 / $25 per MTok</strong>. Every dollar of difference is token volume — Opus 5 thinking by default — not a rate card.</p>
+      <div class="grid g2 rev d3" style="margin-top:22px">
+        <div class="panel">
+          <span class="tag o5">OPUS 5 · 4 TASKS</span>
+          <p class="bignum grad-o5" style="margin-top:10px">$1.88</p>
+          <p class="statsub">51,722 output tokens · 699s</p>
+        </div>
+        <div class="panel">
+          <span class="tag">OPUS 4.8 · 4 TASKS</span>
+          <p class="bignum grad-warm" style="margin-top:10px">$0.97</p>
+          <p class="statsub">26,195 output tokens · 378s</p>
+        </div>
+      </div>
+      <p class="foot rev d4">Compare the Fable lab, where 1.96× cost came from a <strong>2× rate</strong> at 0.83× the tokens. Opposite mechanism, similar multiplier — and only one of them is a knob you can turn.</p>
+    </div>
+  </section>
+
+  <!-- 14 · VERDICT -->
+  <section class="slide" data-name="Verdict">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> The verdict</div>
+      <h2 class="rev d1">Buy the depth where the<br>deliverable <span class="grad-o5">is</span> depth.</h2>
+      <div class="grid g2 rev d2" style="margin-top:20px">
+        <div class="panel">
+          <h3 class="minihead n">Opus 5 wins where output is an enumeration</h3>
+          <ul class="clean o5v" style="margin-top:6px">
+            <li><strong>Security audit</strong> — 15 defects vs 6, zero FPs either way</li>
+            <li><strong>Gate verify</strong> — 6 findings vs 3, at only 1.32×</li>
+            <li><strong>Write-once architecture</strong> — closed the no-500 gap every prior arm left open</li>
+            <li><strong>It never declined</strong> — unlike Fable 5, on the exact same prompts</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3 class="minihead">Opus 4.8 holds where output is one answer</h3>
+          <ul class="clean" style="margin-top:6px">
+            <li><strong>Routine build</strong> — same correct fix, 4/4 invariants, 1.5× cheaper</li>
+            <li><strong>Repeated design</strong> — 16/16 at a third the tokens</li>
+            <li>Extra reasoning has nowhere to go when the answer space is a single minimal patch</li>
+          </ul>
+        </div>
+      </div>
+      <p class="foot rev d4">Neither model missed a keyed defect. This entire verdict rests on depth <em>beyond</em> the key — which is a judgement call, made explicitly and in-repo rather than hidden in a score.</p>
+    </div>
+  </section>
+
+  <!-- 15 · FOR KRIYA -->
+  <section class="slide" data-name="For Kriya">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> What changes in Kriya · routing v2026-07-27</div>
+      <h2 class="rev d1">Opus 5 takes the gate.<br>Opus 4.8 <span class="grad-warm">keeps the build.</span></h2>
+      <div class="panel rev d2" style="margin-top:20px">
+        <table class="sc" style="margin-top:0">
+          <thead><tr><th>Kriya role</th><th>Was</th><th class="n">Now</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Gate verifier</strong></td><td>opus-4-8</td><td class="n">opus-5 ⬆</td><td>6 findings vs 3 at 1.32× — cheapest upgrade in the lab</td></tr>
+            <tr><td><strong>Security critic</strong></td><td>opus-4-8</td><td class="n">opus-5 ⬆</td><td>15 defects vs 6, 0 FP, and it doesn't decline</td></tr>
+            <tr><td><strong>Producer — design</strong></td><td>opus-4-8</td><td class="n">opus-5 ⬆</td><td>Conditional — write-once architecture only</td></tr>
+            <tr><td><strong>Critical audit</strong></td><td>4-8 + sonnet-5</td><td class="n">opus-5 + sonnet-5 ⬆</td><td>Opus member upgraded; blind spots still complementary</td></tr>
+            <tr><td><strong>Producer — code</strong></td><td>opus-4-8</td><td class="o">opus-4-8 =</td><td>Ceiling already reached; 1.5× buys marginal depth</td></tr>
+            <tr><td><strong>High-volume worker</strong></td><td>sonnet-5</td><td class="o">sonnet-5 =</td><td>Enumeration depth is what breadth work doesn't pay for</td></tr>
+            <tr><td><strong>Frontier build</strong></td><td>fable-5</td><td class="o">fable-5 ⬇</td><td>Narrowed — now gated on <em>Opus 5's</em> ceiling, not 4.8's</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="foot rev d4">Fable 5's conditional role shrinks the most: Opus 5 is deeper than 4.8, costs the same per token, and answers the prompts Fable refuses.</p>
+    </div>
+  </section>
+
+  <!-- 16 · LIMITATIONS -->
+  <section class="slide" data-name="Limitations">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> What this lab does not prove</div>
+      <h2 class="rev d1">The honest <span class="grad-warm">margins.</span></h2>
+      <ul class="clean rev d2" style="margin-top:20px">
+        <li><strong>Single run per task.</strong> The 15-vs-6 and 6-vs-3 margins are one sample each. Signal, not a benchmark.</li>
+        <li><strong>The keys saturated.</strong> All four tasks were ceiling-tied, so the entire recommendation rests on grader-assessed depth beyond the key.</li>
+        <li><strong>Effort was equal, not thinking-matched.</strong> Both ran Claude Code defaults — but Opus 5 thinks by default and 4.8 doesn't, which is most of the 1.97× token gap. This is a real-world default-vs-default result, not a controlled reasoning comparison.</li>
+        <li><strong>Severity calibration is not a win here.</strong> Opus 5 diverged from the key in both directions on Task A — it ranked a seeded CRITICAL as HIGH.</li>
+        <li><strong>The source was an excerpt.</strong> Opus 5 self-flagged two of its own findings as unverifiable from it; those were credited only after the grader checked the source.</li>
+        <li><strong>Graded by the author</strong> against real-commit keys — not a blind expert panel.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 17 · CLOSE -->
+  <section class="slide" data-name="Close">
+    <div class="wrap">
+      <div class="kicker rev"><span class="dot"></span> Close</div>
+      <h2 class="rev d1">A free upgrade still has<br>a <span class="grad-o5">bill attached.</span></h2>
+      <p class="lede rev d2">Opus 5 costs the same per token and is measurably deeper. But it spends roughly twice as many tokens by default, so "same price" is a rate, not an invoice. The routing question survives the price parity — it just moves from the rate card to the workload.</p>
+      <p class="lede rev d3" style="margin-top:22px;color:var(--ink)">Route it where the deliverable <strong>is</strong> the enumeration. Keep 4.8 where the deliverable is a single correct answer. And keep verifying which model actually served you.</p>
+      <p class="body rev d4" style="margin-top:24px">Full metrics: <span class="mono">results.json</span> · grading: <span class="mono">scores.json</span> · routing: <a href="../routing/">routing v2026-07-27</a> · harness: <a href="../harness/">harness/</a></p>
+    </div>
+  </section>
+
+</div>
+<script src="../shared/deck.js"></script>
+</body>
+</html>

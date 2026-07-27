@@ -1,80 +1,88 @@
 {
-  "version": "2026-07-02",
-  "generated_from": ["sonnet5-vs-opus48-default", "sonnet5-vs-opus48-ultrathink", "fable5-vs-opus48-burnzone"],
-  "summary": "Opus 4.8 remains Kriya's default backbone. On the BurnZone brownfield, Fable 5 tied Opus 4.8 on the build and design roles (identical graded scores) at ~2x the cost, and on both security roles Fable's safety classifiers declined and Claude Code silently served Opus 4.8 instead — so routing security work to Fable buys nothing but a slower, dearer Opus. Reserve Fable 5 for frontier tasks beyond Opus's ceiling, not routine brownfield. Sonnet 5 stays the cost-efficient producer/high-volume option (esp. under intro pricing); Opus 4.8 owns the gate.",
+  "version": "2026-07-27",
+  "generated_from": ["sonnet5-vs-opus48-default", "sonnet5-vs-opus48-ultrathink", "fable5-vs-opus48-burnzone", "opus5-vs-opus48-burnzone"],
+  "summary": "Opus 5 takes the gate. On the same BurnZone suite and keys as the Fable lab, Opus 5 and Opus 4.8 both hit the objective ceiling on all four tasks — so the answer key does not separate them. What separates them is depth past the key (15 vs 6 valid defects on the security capture; 6 vs 3 on the gate; first arm in any lab to pin the no-500 invariant explicitly) and availability: Opus 5 served both security prompts that Fable 5 declined, making it the first clean 4/4 head-to-head. Because Opus 5 bills at Opus 4.8's identical $5/$25 tier, its 1.94x cost is pure token volume, not a price premium — which changes the routing question from 'is it worth the premium' to 'is the extra enumeration worth it'. It is where the deliverable IS enumeration (gate, security, audit, one-off architecture) and is not where the deliverable is a single correct minimal fix (routine build), so Opus 4.8 keeps producer-code. Sonnet 5 remains the cost-efficient high-volume option; Fable 5 stays a conditional frontier escalation that Opus 5 now largely pre-empts.",
   "recommendations": [
     {
       "role": "gate-verifier",
       "kria_stage": "verify / independent gate (producer != critic)",
-      "model": "claude-opus-4-8",
+      "model": "claude-opus-5",
       "effort": "high",
-      "rationale": "Most exhaustive defect enumeration and fewest misses across labs; gate verdict was effort-robust (pay for high, not max, on the decision). Do NOT route this to Fable 5: on the BurnZone gate task Fable's cyber classifiers declined and the request fell back to Opus 4.8 anyway (slower + dearer).",
-      "evidence": "Sonnet lab Task C: 11 findings @default, 14 @max, correct VETO both. BurnZone Task D: direct Opus caught the planted fail-open + a collation-bypass beyond the real fix; the Fable arm was served by Opus (fallback) and produced the same VETO."
+      "previous": "claude-opus-4-8",
+      "rationale": "CHANGED. Both models return the correct VETO and both catch the planted fail-open, so the binary verdict is model-robust — consistent with the earlier finding that verdicts are effort-robust. But a gate's value is the enumeration behind the verdict, and Opus 5 returned 6 findings to Opus 4.8's 3 at only 1.32x tokens — the narrowest cost gap of the four tasks, which makes this the cheapest place to buy the upgrade. Critically, Opus 5 ranked ABOVE the planted bug the deeper root cause Opus 4.8 left as a secondary: the authorization decision keys off the attacker-supplied request string rather than the resolved role row, so the deny-list is bypassable rather than closed. Do NOT route this to Fable 5 (declines the content); Opus 5 is the strict upgrade — more findings, no declines, same price tier.",
+      "evidence": "BurnZone Task D: Opus 5 VETO, 6 findings, 0 FP, $0.283 / 119s vs Opus 4.8 VETO, 3 findings, 0 FP, $0.227 / 92s. Both avoided the key's req.role false-positive trap. Opus 5 uniquely caught audit/privilege-change non-atomicity and enumerated the patch's unestablished prerequisites."
     },
     {
-      "role": "producer-design",
-      "kria_stage": "design / LLD / HLD / shift-left NFRs / strangler planning",
-      "model": "claude-opus-4-8",
+      "role": "security-critic",
+      "kria_stage": "security capture / threat modeling / brownfield auth audit",
+      "model": "claude-opus-5",
       "effort": "high",
-      "alternatives": ["claude-sonnet-5 (cheaper, matched rubric coverage, cap its 1.5-1.9x verbosity)", "claude-fable-5 (ties Opus but ~2x cost — only if the task exceeds Opus's ceiling)"],
-      "rationale": "On the BurnZone Stage-0 architecture task, Fable 5 and Opus 4.8 both scored 16/16 with the same lone minor miss and both independently found the non-obvious already-minted-JWT/key-rotation insight — a dead heat at 1.96x the cost. Sonnet 5 also matched rubric coverage at lower cost. Opus is the value pick; escalate to Fable only when Opus's ceiling is the bottleneck.",
-      "evidence": "BurnZone Task C: 16/16 both, TIE (independent grader); Fable $0.593 vs Opus $0.316 for the run, Fable slightly terser (10.7k vs 11.5k out tok). Sonnet lab Task B: 14/14 both."
+      "previous": "claude-opus-4-8",
+      "rationale": "CHANGED. This is the role with the widest measured quality gap and the clearest reason to spend. Opus 5 returned 15 valid defects to Opus 4.8's 6 — every keyed defect on both arms, but Opus 5 added roughly nine more that the grader verified against the source (oauth_accounts lookup missing tenant_id; /idtoken with no try/catch; unguarded rows[0] dereference on two paths; type-confusable password length check; role changes not invalidating outstanding JWTs; non-atomic audit write; tenant-provisioning response leak). Zero false positives on either arm. It also emitted per-finding confidence scores and explicitly flagged two things it could not verify rather than asserting them — directly useful to a human reviewer triaging the output. And it does not decline: Fable 5 refused this exact prompt.",
+      "evidence": "BurnZone Task A: Opus 5 served by claude-opus-5, 15 findings, 2/2 seeded criticals, 0 FP, $0.559 / 201s. Opus 4.8: 6 findings, 2/2 seeded criticals, 0 FP, $0.267 / 104s. Lab #3: Fable 5 declined this prompt entirely and was re-served by Opus 4.8."
     },
     {
       "role": "producer-code",
       "kria_stage": "build / brownfield implementation",
       "model": "claude-opus-4-8",
       "effort": "high",
-      "rationale": "Opus 4.8 is the cost-effective build model. On the BurnZone booking-fix task Fable 5 produced an identical, textbook-correct fix (same LEFT JOIN, same 4 invariants, same b.* collision insight) — a TIE — while costing ~2x. Fable was terser (0.64x tokens) but that does not offset the 2x per-token rate.",
-      "evidence": "BurnZone Task B: TIE (independent grader), both 4/4 invariants, 0 FP; Fable $0.504 vs Opus $0.244. Sonnet lab Task A: Opus most valid defects, least verbose."
+      "alternatives": ["claude-opus-5 (deeper edge-case reasoning at 1.5x tokens — take it for pagination/concurrency-sensitive or hard-to-reverse changes)"],
+      "rationale": "UNCHANGED. Opus 4.8 stays the value pick for routine build work. On the booking fix both arms produced the same correct minimal LEFT JOIN with all 4 invariants preserved — when the deliverable is one correct minimal fix, the ceiling is low and Opus 4.8 already reaches it. Opus 5's extra 1.5x tokens bought real but marginal depth: the ON-vs-WHERE trap (moving the tenant predicate to WHERE silently degrades LEFT back to INNER), a `b.id DESC` pagination tiebreaker since created_at is not a total order, and — notably — it ran a SQL parser against its own output to verify it. Escalate to Opus 5 when the change is pagination-, ordering-, or concurrency-sensitive, or hard to reverse; otherwise 4.8.",
+      "evidence": "BurnZone Task B: TIE on the key, both 4/4 invariants, 0 FP. Opus 4.8 $0.258 / 80s vs Opus 5 $0.464 / 122s. Lab #3 Task B: Fable 5 also tied here."
     },
     {
-      "role": "security-critic",
-      "kria_stage": "security capture / threat modeling / brownfield auth audit",
-      "model": "claude-opus-4-8",
+      "role": "producer-design",
+      "kria_stage": "design / LLD / HLD / shift-left NFRs / strangler planning",
+      "model": "claude-opus-5",
       "effort": "high",
-      "rationale": "Route security auditing to Opus 4.8 EXPLICITLY. Fable 5's classifiers target cyber content and declined the BurnZone security-capture prompt; Claude Code transparently re-served it with Opus 4.8 — at a cost + latency premium over calling Opus directly. Direct Opus caught all seeded criticals with zero false positives.",
-      "evidence": "BurnZone Task A: direct Opus 8 findings, 2/2 seeded criticals, 0 FP. Fable arm served by Opus (fallback) cost $0.47/394s vs direct-Opus $0.32/133s."
+      "previous": "claude-opus-4-8",
+      "alternatives": ["claude-opus-4-8 (16/16 at 1/3 the tokens — use for routine or repeated design work)", "claude-sonnet-5 (matched rubric coverage, cheaper, cap its verbosity)"],
+      "rationale": "CHANGED, but conditionally — this is the widest token gap (2.95x) and the recommendation is scoped to high-leverage, write-once architecture. Both arms scored 16/16, so the rubric is saturated and cannot discriminate. Opus 5 earns it on what the rubric does not cover: it is the first arm in ANY lab to pin the no-500 invariant explicitly (invariant I6, error taxonomy), closing the lone gap both Opus 4.8 and Fable 5 left implicit. It also produced the sharpest answer yet to 'how does a characterization net avoid canonizing the bug it froze' — INTENDED/OBSERVED/SUSPECT golden classification where SUSPECT goldens carry a companion red test — plus a mutation-score merge gate on auth middleware (reasoning that assertion count is gameable but mutation score is not), a 90-day rather than 30-day traffic window for billing and cron routes, and hard caps on UNDECIDED and FINISH as forcing functions. For a Stage-0 plan written once and executed for months, that depth is worth 2.95x on a sub-$1 task. For routine or repeated design, use Opus 4.8 at 16/16.",
+      "evidence": "BurnZone Task C: both 16/16. Opus 5 $0.573 / 257s / 17881 tok vs Opus 4.8 $0.217 / 101s / 6055 tok. Opus 4.8's standout was authoring the AuthZ matrix against intended rather than observed policy; Opus 5 reached the same insight via SUSPECT goldens with companion red tests."
     },
     {
       "role": "high-volume-worker",
       "kria_stage": "drafts / first-pass triage / breadth sweeps (low-stakes, non-gate)",
       "model": "claude-sonnet-5",
       "effort": "default",
-      "rationale": "Cost-efficient with adequate recall for non-gate work; escalate to Opus for the gate. Fable 5 is the wrong tier here — 2x the price for no measured quality gain on this class of work.",
+      "rationale": "UNCHANGED. Cost-efficient with adequate recall for non-gate work; escalate to Opus for the gate. Opus 5 is the wrong tier here — its value is enumeration depth, which is precisely what low-stakes breadth work does not pay for, and it runs ~2x the tokens of Opus 4.8 by default.",
       "evidence": "Sonnet lab: default effort produced correct verdicts + most core defects at ~5% (std) / 37% (intro) lower cost than Opus."
+    },
+    {
+      "role": "critical-audit",
+      "kria_stage": "highest-stakes security review / final audit",
+      "model": "ensemble: claude-opus-5 + claude-sonnet-5",
+      "effort": "max",
+      "previous": "ensemble: claude-opus-4-8 + claude-sonnet-5",
+      "rationale": "CHANGED (Opus member upgraded). Blind spots remain complementary and effort does not close them, so keep unioning two models. Opus 5 replaces Opus 4.8 as the Opus-tier member on its 15-vs-6 enumeration margin at the same price tier. Keep Sonnet 5 as the second member — its unique catches are not a subset of Opus's. Fable 5 remains disqualified from security ensembles: its classifiers decline the content.",
+      "evidence": "Sonnet lab Task C: Sonnet uniquely caught stateful g/y regex nondeterminism at both effort levels; Opus never did, even at max. BurnZone Task A: Opus 5 15 findings vs Opus 4.8 6, 0 FP both."
     },
     {
       "role": "frontier-build",
       "kria_stage": "novel / long-horizon / above-Opus-ceiling tasks only",
       "model": "claude-fable-5",
       "effort": "high",
-      "rationale": "Where to spend the Fable premium: genuinely frontier, long-horizon, non-security work where Opus 4.8's ceiling is the actual bottleneck. The BurnZone tasks were NOT such a case — Fable tied Opus there. Re-run the head-to-head when Kriya hits a task Opus struggles with; only then does 2x pay off. Security-flavoured tasks are excluded (classifier decline).",
-      "evidence": "BurnZone (mid-size brownfield): Fable = Opus on quality, 2x cost, unavailable on 2/4 roles. No frontier task in this lab demonstrated a Fable win — the recommendation is conditional and awaits evidence."
-    },
-    {
-      "role": "critical-audit",
-      "kria_stage": "highest-stakes security review / final audit",
-      "model": "ensemble: claude-opus-4-8 + claude-sonnet-5",
-      "effort": "max",
-      "rationale": "Blind spots are complementary and effort does NOT close them; union both models' findings. Note Fable 5 is not an ensemble member for security audits — its classifiers decline the content.",
-      "evidence": "Sonnet lab Task C: Sonnet uniquely caught stateful g/y regex nondeterminism at both effort levels; Opus never did, even at max."
+      "rationale": "NARROWED. Opus 5 now absorbs most of what this role existed for: it is materially deeper than Opus 4.8 at the same price tier and, unlike Fable 5, never declines. The Fable premium ($10/$50, 2x per token) is now justified only for genuinely frontier, long-horizon, non-security work where Opus 5's ceiling — not Opus 4.8's — is the demonstrated bottleneck. No lab has yet produced such a task. Try Opus 5 first in every case; escalate to Fable only on measured evidence that Opus 5 fell short.",
+      "evidence": "BurnZone (mid-size brownfield): Fable 5 tied Opus 4.8 on the two tasks it ran, at 2x cost, unavailable on the other two. Opus 5 beat Opus 4.8 on depth across all four at the same per-token rate."
     }
   ],
   "principles": [
-    "The most capable model is not the default-right model. On a mid-size brownfield, Fable 5 tied Opus 4.8 on quality at 2x the cost — capability you don't need is just spend. Escalate to Fable only when Opus's ceiling is the bottleneck.",
-    "Never route security-critic or gate roles to Fable 5. Its classifiers decline cyber content; via Claude Code you silently get Opus 4.8 (slower + dearer), and a raw API call could refuse outright. Make the routing match what you actually get.",
-    "Always verify the SERVED model, not the requested one. Two of four Fable requests here were served by Opus and would have been mislabelled without billing telemetry.",
-    "Pay for max effort on ENUMERATION (audits, exhaustive review), not on binary PASS/VETO — verdicts were effort-robust.",
-    "Cap Sonnet 5 output; its cheaper tokens only pay off once verbosity (1.5-1.9x) is controlled. (Fable 5, by contrast, was terser than Opus.)",
+    "When the successor is the same price tier, the question stops being 'is it worth the premium' and becomes 'is the extra token volume worth it'. Opus 5 costs 1.94x Opus 4.8 at an identical $5/$25 rate — that is entirely adaptive thinking running by default, and it is worth it exactly where the deliverable IS enumeration (gate, audit, security, write-once architecture) and not where it is a single correct minimal fix.",
+    "A saturated answer key cannot rank two strong models. All four BurnZone tasks were ceiling-tied on the key; every real difference lived in depth beyond it. When both arms max the rubric, either grade the unkeyed depth explicitly or raise the task difficulty — do not report a tie as 'no difference'.",
+    "Availability is a routing property, not a footnote. Fable 5 declines security content and silently yields Opus 4.8; Opus 5 served every prompt in this lab. Route to what actually answers.",
+    "The most capable model is still not the default-right model. Opus 4.8 keeps producer-code because Opus 5's extra depth does not change a one-correct-answer deliverable.",
+    "Always verify the SERVED model, not the requested one. Two of four Fable requests in lab #3 were served by Opus and would have been mislabelled without billing telemetry; all 8 runs in this lab verified clean.",
+    "Pay for max effort on ENUMERATION (audits, exhaustive review), not on binary PASS/VETO — verdicts were effort-robust AND model-robust.",
+    "Cap Sonnet 5 output; its cheaper tokens only pay off once verbosity (1.5-1.9x) is controlled.",
     "Front-load Sonnet-heavy work before 2026-08-31 while intro pricing ($2/$10) makes it ~37-40% cheaper."
   ],
   "caveats": [
-    "Single run per task — signal, not a benchmark.",
-    "BurnZone lab: only 2 of 4 tasks are true Fable-vs-Opus (the two security tasks fell back to Opus), so Fable's build/design tie rests on two data points.",
-    "The Fable->Opus fallback is a Claude Code behaviour; a raw API request with a different fallback config could refuse outright instead. Either way Fable does not serve these prompts.",
-    "Graded against real-commit / published keys by the author + independent grader agents, not a blind expert panel.",
-    "Effort held EQUAL across arms (identical directive), not pinned to a literal 'max' knob.",
-    "Costs normalized to official published rates, not Claude Code's internal cost table."
+    "Single run per task — signal, not a benchmark. The Opus 5 findings-count margins (15 vs 6, 6 vs 3) rest on one sample each.",
+    "All four BurnZone tasks were ceiling-tied on the objective keys; the Opus 5 recommendation rests on grader-assessed depth BEYOND the key, which is a judgement call even though each extra finding was verified against the source.",
+    "Opus 5's extra findings were checked individually against the pasted source for false positives (zero found on either arm), but the source is an excerpt — two of Opus 5's own findings were self-flagged as unverifiable from the excerpt.",
+    "Opus 5 diverged from the key's severity calibration in both directions on Task A (ranked a seeded CRITICAL as HIGH, and a keyed HIGH as CRITICAL); it caught every keyed defect, but severity ranking is not a strength this lab can claim for it.",
+    "Effort held EQUAL across arms (Claude Code default on both), NOT pinned to a literal effort knob — and Opus 5 runs adaptive thinking by default while Opus 4.8 does not, which is itself most of the 1.97x token gap. This is a real-world default-vs-default comparison, not a thinking-matched one.",
+    "Costs normalized to official published rates, not Claude Code's internal cost table.",
+    "Graded against real-commit / published keys by the author, not a blind expert panel."
   ]
 }

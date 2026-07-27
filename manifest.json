@@ -1,9 +1,27 @@
 {
   "hub": "Claude Experimentation Guide",
   "tagline": "A running lab notebook of Claude experiments — model head-to-heads, effort sweeps, and the routing decisions they produce. Every number here comes from a measured run, not a guess.",
-  "updated": "2026-07-15",
+  "updated": "2026-07-27",
   "routing": "routing/routing.json",
   "items": [
+    {
+      "id": "opus5-vs-opus48-burnzone",
+      "kind": "lab",
+      "title": "Opus 5 vs Opus 4.8",
+      "subtitle": "building BurnZone via Kriya",
+      "path": "opus5-vs-opus48-burnzone/",
+      "results": "opus5-vs-opus48-burnzone/results.json",
+      "date": "2026-07-27",
+      "effort": "default",
+      "models": ["claude-opus-5", "claude-opus-4-8"],
+      "card_stats": [
+        { "n": "1.94×", "k": "Opus 5 cost (same tier)" },
+        { "n": "1.97×", "k": "Opus 5 tokens vs 4.8" },
+        { "n": "4 / 4", "k": "true head-to-heads" },
+        { "n": "0", "k": "security prompts declined" }
+      ],
+      "blurb": "The successor at the same $5/$25 price. Both models hit the objective ceiling on all four tasks, so the answer key can't separate them — depth past the key can. Opus 5 returned ~2.5× the valid defects on the security capture and was the first arm in any lab to pin the no-500 invariant explicitly, for 1.94× the spend that is entirely token volume. And where Fable 5 declined both security prompts, Opus 5 served them itself: the first clean 4/4."
+    },
     {
       "id": "opus48-vs-gpt56sol-mobile-aab",
       "kind": "lab",
