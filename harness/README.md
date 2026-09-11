@@ -54,3 +54,28 @@ python3 grade.py \
 Grading has a human-in-the-loop step by design (objective answer keys applied by
 a reviewer). The **measurement** is automated and reproducible; the **judgement**
 is explicit and in-repo. That's the honesty boundary.
+
+## Repo-building labs: `run-build-lab.sh`
+
+`run-lab.sh` is single-shot Q&A and cannot drive a repo build. For labs where each
+arm builds a whole repository (first used by `opus5-1m-vs-astra6-gcp-multitenant-tf`),
+use `run-build-lab.sh`. It runs two headless coding agents — Claude Code and Codex
+CLI — each inside its own git repo, across three rounds, and it (not the arm) makes
+the `round-N` tags so the repos stay comparable.
+
+```bash
+./run-build-lab.sh init            # both arm repos: git init + BRIEF.md only (shasum-verified)
+./run-build-lab.sh build           # round 1, both arms in parallel
+./run-build-lab.sh judge round-1   # fmt / init / validate / tflint(google) / checkov, in a clean checkout
+./run-build-lab.sh repair          # round 2: each arm gets its OWN judge output verbatim, one pass
+./run-build-lab.sh judge round-2
+./run-build-lab.sh review          # round 3: each arm reviews the OTHER arm's round-2 repo, read-only
+./run-build-lab.sh telemetry       # out/<lab>/telemetry.json — Claude modelUsage + Codex turn.completed
+./run-build-lab.sh publish         # LICENSE + PROVENANCE.md, gh repo create --public, push with tags
+```
+
+The lab folder supplies `BRIEF.md`, `prompts/round-{1,2,3}-*.txt` and `judge/tflint.hcl`.
+`RUBRIC.md` never leaves the lab folder. Both arms run with GCP credentials stripped
+from the environment; neither is OS-sandboxed, so the posture is identical.
+Raw run output goes to `out/` (gitignored). The build round can take a long time —
+run it under `nohup` or in a terminal you can leave alone.

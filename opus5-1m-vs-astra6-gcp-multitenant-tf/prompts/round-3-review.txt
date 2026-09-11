@@ -1,0 +1,5 @@
+You are reviewing another engineer's Terraform delivery for the brief in BRIEF.md in the current directory. You have read-only access. Do not modify any file.
+
+Review the whole repository against the brief and report every defect you can confirm from the code: security weaknesses, incorrect or missing resources, requirements the brief states that the code does not meet, and claims in README.md that the code does not implement.
+
+Report only findings you can confirm from the repository. Your final message must be a Markdown list of findings and nothing else. Each finding has four parts: severity (critical, high, medium or low), the file and line, a one-sentence claim, and how a reader can confirm it from the repository.

@@ -1,0 +1,5 @@
+This repository contains your Terraform delivery for BRIEF.md.
+
+A reviewer ran the commands listed below from the repository root. Their complete output is reproduced after the line marked JUDGE OUTPUT, verbatim and unedited. Some of the tools may not have been named in the brief.
+
+You get exactly one repair pass. Fix everything the output shows, stay within the brief, and make no unrelated changes. The same commands will be run again, unchanged, after your pass. Do not push.

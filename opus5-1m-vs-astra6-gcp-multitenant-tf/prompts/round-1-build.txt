@@ -1,0 +1,5 @@
+The build brief is the file BRIEF.md in the current directory, which is the root of an otherwise empty git repository. Read it and deliver everything it asks for, in this repository.
+
+The run is non-interactive: nobody will answer questions. Where the brief is silent, decide, and record each decision and its reasoning in README.md as the brief requires.
+
+Before you finish, run the quality-gate commands listed in the brief yourself, from the repository root, and fix what they report. Do not push.
