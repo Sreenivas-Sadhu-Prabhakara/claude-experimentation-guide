@@ -1,0 +1,459 @@
+{
+  "note": "Graded against RUBRIC.md fixed before the run. Sections 1-4 and 6 scored per tag by an independent grader pass (read-only, git show at round-1 / round-2). Section 7 scores each arm's round-3 findings after the grader verified each one against the other arm's round-2 tag; severity used is the GRADED severity, capped at 6, plus precision. Section 5 (architecture) is human-scored against the five fixed criteria; the numbers recorded were proposed by the grading pass with cited evidence and adopted by the lab owner on 2026-09-11. Both arms were run headless with GCP credentials stripped; neither suppressed a finding (no checkov:skip).",
+  "rubric": "RUBRIC.md",
+  "judge_tools": {
+    "terraform": "1.16.1",
+    "tflint": "0.64.0 + google ruleset 0.39.0",
+    "checkov": "3.3.10"
+  },
+  "opus5-1m": {
+    "model": "claude-opus-5[1m]",
+    "status": "all_rounds_run_and_graded",
+    "rounds": {
+      "round-1": {
+        "sections": [
+          {
+            "n": 1,
+            "name": "Judge gate",
+            "awarded": 18,
+            "max": 20,
+            "evidence": "fmt/init/validate/tflint exit 0; checkov 27 failed of 75 -> 0/2"
+          },
+          {
+            "n": 2,
+            "name": "Requirements coverage",
+            "awarded": 25,
+            "max": 25,
+            "evidence": "YAML tenant files + for_each (main.tf, locals.tf:19-24, tenants/*.yaml); database-per-tenant on shared instance (README); 2 Cloud Run v2 services per tenant (modules/tenant/runtime.tf); per-tenant SAs; ipv4_enabled=false + private_network; per-tenant secrets with member IAM; backend gcs {} with .tfbackend inputs; single root + environments/*.tfvars; tenant log sink + budget modules"
+          },
+          {
+            "n": 3,
+            "name": "Security posture",
+            "awarded": 15,
+            "max": 15,
+            "evidence": "no primitive roles; allUsers only modules/tenant/main.tf:95 gated on consumer_public and declared in README; no secret literals; no SA keys; prod deletion_protection=true; ssl_mode ENCRYPTED_ONLY -> TRUSTED_CLIENT_CERTIFICATE_REQUIRED at round-2"
+          },
+          {
+            "n": 4,
+            "name": "Code structure",
+            "awarded": 10,
+            "max": 10,
+            "evidence": "7 modules (8 at round-2 with kms), typed/described vars; no env duplication; tenant id regex/filename/reader validations (main.tf:11-34); outputs URIs, SA emails, SQL connection_name"
+          },
+          {
+            "n": 6,
+            "name": "Documentation",
+            "awarded": 4,
+            "max": 5,
+            "evidence": "README covers boundary/isolation/modules/region/naming; runbook steps 1-9 (round-2: adds access-log prereq + pgaudit); versions.tf uses ranges (>= 1.9.0,< 2.0.0; ~> 8.0) not explicit pins -> 0/1"
+          }
+        ],
+        "subtotal": 72,
+        "max": 75
+      },
+      "round-2": {
+        "sections": [
+          {
+            "n": 1,
+            "name": "Judge gate",
+            "awarded": 20,
+            "max": 20,
+            "evidence": "all exit 0; checkov 85 passed, 0 failed"
+          },
+          {
+            "n": 2,
+            "name": "Requirements coverage",
+            "awarded": 25,
+            "max": 25,
+            "evidence": "YAML tenant files + for_each (main.tf, locals.tf:19-24, tenants/*.yaml); database-per-tenant on shared instance (README); 2 Cloud Run v2 services per tenant (modules/tenant/runtime.tf); per-tenant SAs; ipv4_enabled=false + private_network; per-tenant secrets with member IAM; backend gcs {} with .tfbackend inputs; single root + environments/*.tfvars; tenant log sink + budget modules"
+          },
+          {
+            "n": 3,
+            "name": "Security posture",
+            "awarded": 15,
+            "max": 15,
+            "evidence": "no primitive roles; allUsers only modules/tenant/main.tf:95 gated on consumer_public and declared in README; no secret literals; no SA keys; prod deletion_protection=true; ssl_mode ENCRYPTED_ONLY -> TRUSTED_CLIENT_CERTIFICATE_REQUIRED at round-2"
+          },
+          {
+            "n": 4,
+            "name": "Code structure",
+            "awarded": 10,
+            "max": 10,
+            "evidence": "7 modules (8 at round-2 with kms), typed/described vars; no env duplication; tenant id regex/filename/reader validations (main.tf:11-34); outputs URIs, SA emails, SQL connection_name"
+          },
+          {
+            "n": 6,
+            "name": "Documentation",
+            "awarded": 4,
+            "max": 5,
+            "evidence": "README covers boundary/isolation/modules/region/naming; runbook steps 1-9 (round-2: adds access-log prereq + pgaudit); versions.tf uses ranges (>= 1.9.0,< 2.0.0; ~> 8.0) not explicit pins -> 0/1"
+          }
+        ],
+        "subtotal": 74,
+        "max": 75
+      }
+    },
+    "section5": {
+      "n": 5,
+      "name": "Architecture judgement",
+      "awarded": 13,
+      "max": 15,
+      "rows": [
+        {
+          "criterion": "Tenant boundary: choice + rejected alternative + trade-off",
+          "awarded": 3,
+          "max": 3,
+          "evidence": "README:133-167 shared project per env; rejects project-per-tenant and folder-per-tenant; trade-offs stated"
+        },
+        {
+          "criterion": "Data isolation: README complete + code matches",
+          "awarded": 4,
+          "max": 4,
+          "evidence": "README:169-213 database-per-tenant on shared instance; rejects RLS, schema-per-tenant, instance-per-tenant; modules/database + tenant DB match"
+        },
+        {
+          "criterion": "Blast radius of a compromised tenant SA",
+          "awarded": 2,
+          "max": 4,
+          "evidence": "secrets/buckets/topics member-scoped, but cloudsql.client project-wide with no IAM condition (main.tf:129-135) and shared instance CONNECT revoked only by manual runbook step -> connect reach into other tenants"
+        },
+        {
+          "criterion": "Service boundary: different SAs + README says why two services",
+          "awarded": 2,
+          "max": 2,
+          "evidence": "two SAs per tenant (modules/tenant/main.tf:106,113); README:120-123 'two services, not two path prefixes'"
+        },
+        {
+          "criterion": "Consistency: README rationale vs code on left-open decisions",
+          "awarded": 2,
+          "max": 2,
+          "evidence": "no contradictions on boundary/isolation/layout/region; pgAudit + override overclaims are outside the left-open set"
+        }
+      ]
+    },
+    "section7": {
+      "n": 7,
+      "name": "Cross-review (round 3)",
+      "awarded": 1.5,
+      "max": 10,
+      "raised": 6,
+      "verified": {
+        "REAL": 3,
+        "NOT-REAL": 2,
+        "PLAUSIBLE": 1
+      },
+      "severity_weighted_sum": 1.5,
+      "severity_pts": 1.5,
+      "precision": 0.5,
+      "precision_pts": 0,
+      "findings": [
+        {
+          "n": 1,
+          "claimed": "high",
+          "graded": null,
+          "verdict": "NOT-REAL",
+          "note": "versioning+retention_policy coexist as cited (observability.tf:10-21) but verifier holds the mutual-exclusion rule is lifted; platform fact disputed -> unverified"
+        },
+        {
+          "n": 2,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "consumer+provider identical DB privileges, no SQL grants (database.tf:93-99, main.tf:20-26); documented DBA deferral README:180-195"
+        },
+        {
+          "n": 3,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "NOT-REAL",
+          "note": "INGRESS_TRAFFIC_ALL + IAM invoker is standard; allUsers opt-in default false; README:73-90 documents -> author's delegated decision"
+        },
+        {
+          "n": 4,
+          "claimed": "low",
+          "graded": "low",
+          "verdict": "PLAUSIBLE",
+          "note": "bucket is its own usage-log destination (observability.tf:4,15); 'self-feeding loop advised against' unconfirmed"
+        },
+        {
+          "n": 5,
+          "claimed": "low",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "backup_configuration lacks location (database.tf:67-76); defaults to multi-region; README:215/219 under-discloses residency"
+        },
+        {
+          "n": 6,
+          "claimed": "low",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "cidrnetmask-only validation (variables.tf:44-57) accepts misaligned base, no overlap check vs README:94 precondition"
+        }
+      ]
+    },
+    "repair_delta": 2,
+    "total": 88.5,
+    "max": 100,
+    "round1_total_same_basis": 86.5
+  },
+  "astra6": {
+    "model": "gpt-6-astra",
+    "status": "all_rounds_run_and_graded",
+    "rounds": {
+      "round-1": {
+        "sections": [
+          {
+            "n": 1,
+            "name": "Judge gate",
+            "awarded": 18,
+            "max": 20,
+            "evidence": "fmt/init/validate/tflint exit 0; checkov 13 failed of 40 -> 0/2"
+          },
+          {
+            "n": 2,
+            "name": "Requirements coverage",
+            "awarded": 25,
+            "max": 25,
+            "evidence": "var.tenants map in examples/tenants.tfvars.example (atlas, harbor) + for_each; database-per-tenant on dedicated instance (README:53); consumer/provider Cloud Run v2 via local.workloads (services.tf:25-36); per-workload SAs; ipv4_enabled=false + private_network (database.tf:21-22); per-tenant/side secrets with member IAM (services.tf:2-22); backend gcs {} + .tfbackend examples; env = tfvars only; per-tenant sink + project budget"
+          },
+          {
+            "n": 3,
+            "name": "Security posture",
+            "awarded": 15,
+            "max": 15,
+            "evidence": "no primitive roles; allUsers only main.tf:17 gated on consumer_public (default false), README:73-78; no secret literals; no SA keys; prod deletion_protection=true; connector_enforcement REQUIRED; ssl_mode ENCRYPTED_ONLY -> TRUSTED_CLIENT_CERTIFICATE_REQUIRED at round-2"
+          },
+          {
+            "n": 4,
+            "name": "Code structure",
+            "awarded": 9,
+            "max": 10,
+            "evidence": "single root, zero child modules (deliberate, README:203) -> 2/3 on modules row; vars typed/described/defaulted; env = tfvars only; tenant id + invoker validations (variables.tf:85-95); outputs url/service_account/database_connection"
+          },
+          {
+            "n": 6,
+            "name": "Documentation",
+            "awarded": 5,
+            "max": 5,
+            "evidence": "README rationale for boundary/isolation/layout/region/network/naming; runbook 10 steps with commands; versions.tf pins = 1.16.1 and google = 7.25.0 -> 1/1"
+          }
+        ],
+        "subtotal": 72,
+        "max": 75
+      },
+      "round-2": {
+        "sections": [
+          {
+            "n": 1,
+            "name": "Judge gate",
+            "awarded": 20,
+            "max": 20,
+            "evidence": "all exit 0; checkov 42 passed, 0 failed"
+          },
+          {
+            "n": 2,
+            "name": "Requirements coverage",
+            "awarded": 25,
+            "max": 25,
+            "evidence": "var.tenants map in examples/tenants.tfvars.example (atlas, harbor) + for_each; database-per-tenant on dedicated instance (README:53); consumer/provider Cloud Run v2 via local.workloads (services.tf:25-36); per-workload SAs; ipv4_enabled=false + private_network (database.tf:21-22); per-tenant/side secrets with member IAM (services.tf:2-22); backend gcs {} + .tfbackend examples; env = tfvars only; per-tenant sink + project budget"
+          },
+          {
+            "n": 3,
+            "name": "Security posture",
+            "awarded": 15,
+            "max": 15,
+            "evidence": "no primitive roles; allUsers only main.tf:17 gated on consumer_public (default false), README:73-78; no secret literals; no SA keys; prod deletion_protection=true; connector_enforcement REQUIRED; ssl_mode ENCRYPTED_ONLY -> TRUSTED_CLIENT_CERTIFICATE_REQUIRED at round-2"
+          },
+          {
+            "n": 4,
+            "name": "Code structure",
+            "awarded": 9,
+            "max": 10,
+            "evidence": "single root, zero child modules (deliberate, README:203) -> 2/3 on modules row; vars typed/described/defaulted; env = tfvars only; tenant id + invoker validations (variables.tf:85-95); outputs url/service_account/database_connection"
+          },
+          {
+            "n": 6,
+            "name": "Documentation",
+            "awarded": 5,
+            "max": 5,
+            "evidence": "README rationale for boundary/isolation/layout/region/network/naming; runbook 10 steps with commands; versions.tf pins = 1.16.1 and google = 7.25.0 -> 1/1"
+          }
+        ],
+        "subtotal": 74,
+        "max": 75
+      }
+    },
+    "section5": {
+      "n": 5,
+      "name": "Architecture judgement",
+      "awarded": 14,
+      "max": 15,
+      "rows": [
+        {
+          "criterion": "Tenant boundary: choice + rejected alternative + trade-off",
+          "awarded": 3,
+          "max": 3,
+          "evidence": "README:37-51 shared project with dedicated tenant resources; rejects project-per-tenant and pooled service; trade-offs stated"
+        },
+        {
+          "criterion": "Data isolation: README complete + code matches",
+          "awarded": 4,
+          "max": 4,
+          "evidence": "README:53-69 database-per-tenant on dedicated instance; rejects shared instance, schema-per-tenant, RLS; database.tf per-tenant instance matches"
+        },
+        {
+          "criterion": "Blast radius of a compromised tenant SA",
+          "awarded": 4,
+          "max": 4,
+          "evidence": "secrets member-scoped (services.tf:17-22); SQL roles conditioned on the tenant's own instance (database.tf:106-110); one instance per tenant -> zero reach"
+        },
+        {
+          "criterion": "Service boundary: different SAs + README says why two services",
+          "awarded": 1,
+          "max": 2,
+          "evidence": "per-workload SAs (main.tf:47-50); README never states why two services rather than one (pooled-service rejection is about tenants, not sides)"
+        },
+        {
+          "criterion": "Consistency: README rationale vs code on left-open decisions",
+          "awarded": 2,
+          "max": 2,
+          "evidence": "no contradictions"
+        }
+      ]
+    },
+    "section7": {
+      "n": 7,
+      "name": "Cross-review (round 3)",
+      "awarded": 10,
+      "max": 10,
+      "raised": 16,
+      "verified": {
+        "REAL": 15,
+        "NOT-REAL": 0,
+        "PLAUSIBLE": 1
+      },
+      "severity_weighted_sum": 11.5,
+      "severity_pts": 6,
+      "precision": 0.9375,
+      "precision_pts": 4,
+      "findings": [
+        {
+          "n": 1,
+          "claimed": "high",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "no SQL grants; REVOKE CONNECT is a manual runbook step (tenant/main.tf:141-161, README:822-858)"
+        },
+        {
+          "n": 2,
+          "claimed": "high",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "cloudsql.client/instanceUser project-wide without IAM condition (main.tf:129-135)"
+        },
+        {
+          "n": 3,
+          "claimed": "high",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "BigQuery encryption identity hardcoded, never provisioned (locals.tf:181); README pre-step exists"
+        },
+        {
+          "n": 4,
+          "claimed": "high",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "dead-letter topic has no subscription/retention -> message loss (tenant/main.tf:264-271)"
+        },
+        {
+          "n": 5,
+          "claimed": "high",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "dev/staging provider min=0 + cpu_idle with pull subscription (api_service/main.tf:50)"
+        },
+        {
+          "n": 6,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "pgaudit enabled but pgaudit.log never set (database/main.tf:111-114)"
+        },
+        {
+          "n": 7,
+          "claimed": "medium",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "tenant sink is additive; _Default keeps a copy (observability.tf:3,84)"
+        },
+        {
+          "n": 8,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "PLAUSIBLE",
+          "note": "unique_writer_identity shared service agent claim unconfirmed (observability.tf:93)"
+        },
+        {
+          "n": 9,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "starts_with alert filter collides for acme / acme-retail (observability.tf:141)"
+        },
+        {
+          "n": 10,
+          "claimed": "medium",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "env secret overrides silently ignored (locals.tf:92-97 vs tenants/README.md:28)"
+        },
+        {
+          "n": 11,
+          "claimed": "low",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "display_name override ignored (locals.tf:44); same root cause as #10"
+        },
+        {
+          "n": 12,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "forecasted_threshold_percent not passed to tenant budgets (main.tf:225,263-268)"
+        },
+        {
+          "n": 13,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "budget display_name can exceed 60 chars (tenant/budget.tf:8)"
+        },
+        {
+          "n": 14,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "README:701-707 role list omits securityAdmin (firewall) and BigQuery role"
+        },
+        {
+          "n": 15,
+          "claimed": "medium",
+          "graded": "medium",
+          "verdict": "REAL",
+          "note": "prod offboarding runbook blocked by deletion_protection (README:899-907)"
+        },
+        {
+          "n": 16,
+          "claimed": "medium",
+          "graded": "low",
+          "verdict": "REAL",
+          "note": "versions.tf ranges vs brief's 'explicit versions' (versions.tf:5,10,19); lockfile pins providers"
+        }
+      ]
+    },
+    "repair_delta": 2,
+    "total": 98,
+    "max": 100,
+    "round1_total_same_basis": 96
+  }
+}

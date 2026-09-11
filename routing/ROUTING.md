@@ -1,7 +1,7 @@
 # Kriya model routing — recommendation
 
-**Version 2026-07-27** · derived from measured runs, not vibes.
-Source labs: [`sonnet5-vs-opus48-default`](../sonnet5-vs-opus48-default/) · [`sonnet5-vs-opus48-ultrathink`](../sonnet5-vs-opus48-ultrathink/) · [`fable5-vs-opus48-burnzone`](../fable5-vs-opus48-burnzone/) · [`opus5-vs-opus48-burnzone`](../opus5-vs-opus48-burnzone/).
+**Version 2026-09-11** · derived from measured runs, not vibes.
+Source labs: [`sonnet5-vs-opus48-default`](../sonnet5-vs-opus48-default/) · [`sonnet5-vs-opus48-ultrathink`](../sonnet5-vs-opus48-ultrathink/) · [`fable5-vs-opus48-burnzone`](../fable5-vs-opus48-burnzone/) · [`opus5-vs-opus48-burnzone`](../opus5-vs-opus48-burnzone/) · [`opus5-1m-vs-astra6-gcp-multitenant-tf`](../opus5-1m-vs-astra6-gcp-multitenant-tf/).
 Machine-readable: [`routing.json`](routing.json).
 
 This is the actionable output of the model labs: **which model + effort tier each Kriya agent role should use**, with the evidence behind it. Wire it into Kriya's per-agent front-matter / tech-radar.
@@ -25,6 +25,8 @@ Because Opus 5 bills at Opus 4.8's **identical $5/$25 tier**, its **1.94×** cos
 | **Producer — design** ⬆ | design · LLD · shift-left · strangler plan | `claude-opus-5` | `high` | **Changed, conditionally.** Both scored **16/16** — the rubric is saturated. Opus 5 earns it off-rubric: first arm anywhere to pin **no-500 explicitly** (invariant I6), plus `INTENDED`/`OBSERVED`/`SUSPECT` goldens with companion red tests so the net can't canonize the frozen bug, a **mutation-score** merge gate on auth middleware (assertion *count* is gameable, mutation score isn't), a 90-day window for billing/cron routes, and hard caps on `UNDECIDED`/`FINISH` as forcing functions. Widest token gap (**2.95×**) — worth it for write-once architecture, not for routine design (use 4.8 at 16/16). |
 | **High-volume worker** = | drafts · triage · breadth | `claude-sonnet-5` | `default` | **Unchanged.** Cost-efficient, adequate recall for non-gate work. Opus 5 is the wrong tier — its value is enumeration depth, exactly what low-stakes breadth doesn't pay for. |
 | **Critical audit** ⬆ | highest-stakes review | **ensemble** `opus-5` **+** `sonnet-5` | `max` | **Opus member upgraded.** Blind spots stay complementary and effort doesn't close them, so keep unioning two models. Sonnet 5 stays — its unique catches aren't a subset of Opus's. Fable remains disqualified (classifiers decline). |
+| **IaC producer** 🆕 | build · Terraform | `claude-opus-5` | `default` | **New.** Multi-tenant GCP Terraform, topology left open: Opus 5 (1M) and GPT-6 Astra **tied 74/75** on every objective check after one repair pass, both cleared an unannounced checkov scan with no suppressions. No build-quality reason to route Terraform outside the family. On repair, tell it to fix *exactly* what the tool reports — Opus added a KMS module and CMEK unasked. |
+| **IaC reviewer** 🆕 *(evidence-limited)* | review · Terraform / cloud IAM | `gpt-6-astra` cross-vendor, or `claude-opus-5` with a *confirm-from-code* directive | `default` | **New, one lab.** Reviewing each other's repos, Astra raised 16 findings, **15 verified** (precision 0.94), incl. a project-wide `cloudsql.client` grant with no IAM condition. Opus raised 6, **3 verified**, all low; its one *high* rested on a GCS restriction the grader couldn't confirm. Review was the entire margin (**10 vs 1.5**). Re-test before relying on it. |
 | **Frontier build** *(conditional)* ⬇ | novel · long-horizon · above-**Opus-5**-ceiling only | `claude-fable-5` | `high` | **Narrowed.** Opus 5 absorbs most of what this role existed for — deeper than 4.8 at the same price, and it never declines. The Fable premium ($10/$50) is now justified only where **Opus 5's** ceiling is the demonstrated bottleneck. No lab has produced such a task. Try Opus 5 first, always. |
 
 ## Principles
@@ -36,6 +38,7 @@ Because Opus 5 bills at Opus 4.8's **identical $5/$25 tier**, its **1.94×** cos
 5. **Verify the *served* model, not the requested one.** 2 of 4 Fable requests in lab #3 were served by Opus; all 8 here verified clean.
 6. **Pay for max effort on *enumeration*, not on *PASS/VETO*.** The gate verdict is robust to both effort *and* model.
 7. **Cap Sonnet 5's output** (1.5–1.9× verbosity).
+9. **A build both models pass can't rank them.** Add a review round on the same artefact and score only verified findings — in the Terraform lab the build tied 74/75 and the whole margin was review depth (15 vs 3 verified).
 8. **Front-load Sonnet-heavy work before 2026-08-31**, while intro pricing ($2/$10) makes it ~37–40% cheaper.
 
 ## Caveats

@@ -1,0 +1,13 @@
+{
+  "id": "opus5-1m-vs-astra6-gcp-multitenant-tf",
+  "title": "Opus 5 (1M) vs GPT-6 Astra - GCP Multi-tenant Terraform",
+  "date": "2026-09-11",
+  "effort": "default (both arms headless, no effort directive)",
+  "app": "Multi-tenant two-sided platform on GCP (Terraform)",
+  "framework": "Terraform 1.16.1 / hashicorp-google",
+  "arms": {
+    "opus5-1m": "claude-opus-5[1m]",
+    "astra6": "gpt-6-astra"
+  },
+  "headline": "Tied 74/75 on every objective build check after one repair pass; GPT-6 Astra wins 98-88.5 on the cross-review round (15 verified findings vs 3) and on the blast-radius criterion. Opus 5 was 2.4x slower and 6.5x the output tokens on the build; cost is reported for Opus only ($16.37 across three rounds) because Codex CLI reports none."
+}

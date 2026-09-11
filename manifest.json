@@ -1,9 +1,42 @@
 {
   "hub": "Claude Experimentation Guide",
   "tagline": "A running lab notebook of Claude experiments — model head-to-heads, effort sweeps, and the routing decisions they produce. Every number here comes from a measured run, not a guess.",
-  "updated": "2026-07-27",
+  "updated": "2026-09-11",
   "routing": "routing/routing.json",
   "items": [
+    {
+      "id": "opus5-1m-vs-astra6-gcp-multitenant-tf",
+      "kind": "lab",
+      "title": "Opus 5 (1M) vs GPT-6 Astra",
+      "subtitle": "multi-tenant GCP platform in Terraform",
+      "path": "opus5-1m-vs-astra6-gcp-multitenant-tf/",
+      "results": "opus5-1m-vs-astra6-gcp-multitenant-tf/results.json",
+      "date": "2026-09-11",
+      "effort": "default",
+      "models": [
+        "claude-opus-5[1m]",
+        "gpt-6-astra"
+      ],
+      "card_stats": [
+        {
+          "n": "74 / 75",
+          "k": "objective build, both arms"
+        },
+        {
+          "n": "15 vs 3",
+          "k": "verified review findings"
+        },
+        {
+          "n": "98 – 88.5",
+          "k": "Astra leads"
+        },
+        {
+          "n": "2 repos",
+          "k": "public, Apache-2.0"
+        }
+      ],
+      "blurb": "Identical brief, topology left open, three rounds. Both arms passed every announced gate on the first draft, failed only the unannounced checkov scan, and cleared it in one repair pass. The build could not separate them; the cross-review did. Astra's review of the Opus repo produced 15 verified defects to Opus's 3, and the same IAM finding cost Opus a blast-radius point. First lab in this hub to keep the generated code: both repos are public."
+    },
     {
       "id": "opus5-vs-opus48-burnzone",
       "kind": "lab",
@@ -13,12 +46,27 @@
       "results": "opus5-vs-opus48-burnzone/results.json",
       "date": "2026-07-27",
       "effort": "default",
-      "models": ["claude-opus-5", "claude-opus-4-8"],
+      "models": [
+        "claude-opus-5",
+        "claude-opus-4-8"
+      ],
       "card_stats": [
-        { "n": "1.94×", "k": "Opus 5 cost (same tier)" },
-        { "n": "1.97×", "k": "Opus 5 tokens vs 4.8" },
-        { "n": "4 / 4", "k": "true head-to-heads" },
-        { "n": "0", "k": "security prompts declined" }
+        {
+          "n": "1.94×",
+          "k": "Opus 5 cost (same tier)"
+        },
+        {
+          "n": "1.97×",
+          "k": "Opus 5 tokens vs 4.8"
+        },
+        {
+          "n": "4 / 4",
+          "k": "true head-to-heads"
+        },
+        {
+          "n": "0",
+          "k": "security prompts declined"
+        }
       ],
       "blurb": "The successor at the same $5/$25 price. Both models hit the objective ceiling on all four tasks, so the answer key can't separate them — depth past the key can. Opus 5 returned ~2.5× the valid defects on the security capture and was the first arm in any lab to pin the no-500 invariant explicitly, for 1.94× the spend that is entirely token volume. And where Fable 5 declined both security prompts, Opus 5 served them itself: the first clean 4/4."
     },
@@ -31,12 +79,27 @@
       "results": "opus48-vs-gpt56sol-mobile-aab/results.json",
       "date": "2026-07-15",
       "effort": "both-artifacts-complete",
-      "models": ["claude-opus-4-8", "gpt-5.6-sol"],
+      "models": [
+        "claude-opus-4-8",
+        "gpt-5.6-sol"
+      ],
       "card_stats": [
-        { "n": "41.97 MB", "k": "Opus signed .aab" },
-        { "n": "41.45 MB", "k": "GPT signed .aab" },
-        { "n": "433k / 285k", "k": "Opus / GPT build tokens" },
-        { "n": "0", "k": "fabricated comparison numbers" }
+        {
+          "n": "41.97 MB",
+          "k": "Opus signed .aab"
+        },
+        {
+          "n": "41.45 MB",
+          "k": "GPT signed .aab"
+        },
+        {
+          "n": "433k / 285k",
+          "k": "Opus / GPT build tokens"
+        },
+        {
+          "n": "0",
+          "k": "fabricated comparison numbers"
+        }
       ],
       "blurb": "Both contenders produced real signed Flutter Android App Bundles. GPT leads the preliminary objective artifact audit 96-91. Build-phase new tokens were ~432,615 (Opus) vs 285,373 (GPT) across two different harnesses — the same order of magnitude, so no clean token-efficiency winner is claimed."
     },
@@ -49,11 +112,23 @@
       "results": "fable5-vs-opus48-burnzone/results.json",
       "date": "2026-07-02",
       "effort": "default",
-      "models": ["claude-fable-5", "claude-opus-4-8"],
+      "models": [
+        "claude-fable-5",
+        "claude-opus-4-8"
+      ],
       "card_stats": [
-        { "n": "1.96×", "k": "Fable cost (B+C)" },
-        { "n": "0.83×", "k": "Fable tokens vs Opus" },
-        { "n": "2 / 4", "k": "tasks fell back to Opus" }
+        {
+          "n": "1.96×",
+          "k": "Fable cost (B+C)"
+        },
+        {
+          "n": "0.83×",
+          "k": "Fable tokens vs Opus"
+        },
+        {
+          "n": "2 / 4",
+          "k": "tasks fell back to Opus"
+        }
       ],
       "blurb": "Is the most capable model worth 2× to build a real brownfield? On the two build/design tasks it ran, Fable 5 tied Opus 4.8 at ~2× the cost — and on both security tasks its classifiers declined and Claude Code silently served Opus instead."
     },
@@ -66,7 +141,10 @@
       "results": "sonnet5-vs-opus48-ultrathink/results.json",
       "date": "2026-07-01",
       "effort": "max",
-      "models": ["claude-sonnet-5", "claude-opus-4-8"],
+      "models": [
+        "claude-sonnet-5",
+        "claude-opus-4-8"
+      ],
       "blurb": "Does cranking to max effort change the verdict? Recall rose ~1.7x the cost, gate decisions didn't move, and one blind spot survived."
     },
     {
@@ -78,7 +156,10 @@
       "results": "sonnet5-vs-opus48-default/results.json",
       "date": "2026-07-01",
       "effort": "default",
-      "models": ["claude-sonnet-5", "claude-opus-4-8"],
+      "models": [
+        "claude-sonnet-5",
+        "claude-opus-4-8"
+      ],
       "blurb": "The first head-to-head on a real Apolaki build under Kriya. Headline: cheaper per token != cheaper per task."
     },
     {
@@ -88,7 +169,9 @@
       "subtitle": "explainer",
       "path": "fable/",
       "date": "2026-06-11",
-      "models": ["claude-fable-5"],
+      "models": [
+        "claude-fable-5"
+      ],
       "blurb": "How to actually use Claude Fable 5 well — the quirks, the pitfalls, and copy-paste patterns."
     }
   ]

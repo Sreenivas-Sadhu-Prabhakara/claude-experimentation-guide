@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Opus 5 (1M) vs GPT-6 Astra - GCP Multi-tenant Terraform Lab</title>
+<meta name="description" content="A Kriya lab comparing Claude Opus 5 (1M context) and GPT-6 Astra building a multi-tenant, two-sided GCP platform in Terraform: three rounds (build, repair, cross-review), machine-checked judge, both repos public." />
+<link rel="stylesheet" href="../shared/keynote.css" />
+<style>
+  .lab-wrap{max-width:1120px;margin:0 auto;padding:96px 22px 56px}
+  .lab-hero{min-height:auto;padding:44px 0 22px}
+  .evidence{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px;margin-top:26px}
+  .evidence .panel{min-height:150px}
+  .callout{border:1px solid rgba(255,159,10,.35);background:rgba(255,159,10,.1);border-radius:8px;padding:16px;margin-top:22px}
+  .mono-small{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;overflow-wrap:anywhere}
+  .plain-table{width:100%;border-collapse:collapse;margin-top:14px}
+  .plain-table th,.plain-table td{padding:12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  .plain-table td.num,.plain-table th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .ok{color:#5be584;font-weight:800}
+  .warn{color:#ffab2e;font-weight:800}
+  .results{margin-top:34px;padding:26px 0}
+  .result-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:22px}
+  .result-card{position:relative;border:1px solid var(--line);border-radius:8px;padding:24px;background:rgba(255,255,255,.025)}
+  .result-card.gpt{border-color:rgba(47,157,255,.42);background:linear-gradient(158deg,rgba(47,157,255,.12),rgba(138,107,255,.04) 72%,transparent)}
+  .result-card.opus{border-color:rgba(255,171,46,.36);background:linear-gradient(158deg,rgba(255,171,46,.1),rgba(255,90,95,.03) 72%,transparent)}
+  .result-label{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;text-transform:uppercase;color:var(--muted);letter-spacing:0}
+  .result-score{font-size:72px;font-weight:750;line-height:1;margin:14px 0 8px;font-variant-numeric:tabular-nums}
+  .result-score span{font-size:.32em;color:var(--muted);font-weight:600}
+  .result-facts{list-style:none;margin-top:18px;border-top:1px solid var(--line)}
+  .result-facts li{display:flex;justify-content:space-between;gap:18px;padding:10px 0;border-bottom:1px solid var(--line);font-size:14px}
+  .result-facts li span:first-child{color:var(--muted)}
+  .result-facts li span:last-child{text-align:right;font-weight:650}
+  .result-note{margin-top:18px;color:var(--muted);font-size:14px;line-height:1.55;max-width:920px}
+  .table-scroll{overflow-x:auto}
+  @media(max-width:720px){.result-grid{grid-template-columns:1fr}.result-score{font-size:58px}.result-facts li{align-items:flex-start}}
+  .rev{opacity:1;transform:none;animation:labReveal .6s var(--ease) both}
+  .rev.d2{animation-delay:.08s}.rev.d3{animation-delay:.16s}.rev.d4{animation-delay:.24s}
+  @keyframes labReveal{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+  @media(prefers-reduced-motion:reduce){.rev{animation:none}}
+</style>
+</head>
+<body>
+<a class="backlink" href="../">← all labs</a>
+<main class="lab-wrap">
+  <section class="lab-hero">
+    <div class="kicker rev"><span class="dot"></span> A Kriya lab slot · 11 September 2026</div>
+    <h1 class="rev d1">Opus 5 <span style="font-size:.5em;color:var(--muted2)">1M</span> <span style="color:var(--muted2);font-weight:600">vs</span><br><span class="grad">GPT-6 Astra</span></h1>
+    <p class="lede rev d2" style="margin-top:24px">Task: from an identical brief that states requirements but not topology, write the Terraform for a multi-tenant, two-sided platform on GCP. Three rounds: build, one self-repair pass from raw tool output, then review the other arm's repo.</p>
+    <div class="callout rev d3">
+      <strong>Trust-model deviation.</strong> Every other lab here discards the models' generated code. This one keeps it: both repos are public, Apache-2.0, with a <code>PROVENANCE.md</code>, so anyone can re-run the judge or re-grade the findings. Nothing was applied to GCP; neither arm had credentials.
+    </div>
+  </section>
+
+  <section class="panel rev">
+    <h2>Setup</h2>
+    <p class="body">Both arms ran headless and non-interactive inside their own fresh git repo containing only <code>BRIEF.md</code> (byte-identical, checksum-verified). The rubric was fixed and committed before the run and never entered either repo. Model identity comes from telemetry, not self-report: <code>claude-opus-5[1m]</code> via Claude Code, <code>gpt-6-astra</code> via Codex CLI 0.153.4.</p>
+    <div class="evidence">
+      <div class="panel">
+        <h3>Judge</h3>
+        <p class="mono-small">terraform fmt · init -backend=false · validate · tflint (google ruleset) · checkov</p>
+        <p class="body">Checkov was deliberately not named in the brief, so round 2 measures repair from unfamiliar tool output.</p>
+      </div>
+      <div class="panel">
+        <h3>Opus 5 repo</h3>
+        <p class="stat" style="font-size:34px">52 files</p>
+        <p class="body">7 modules, YAML tenant registry, shared project per environment, database-per-tenant on a shared instance.</p>
+        <p class="mono-small"><a href="https://github.com/Sreenivas-Sadhu-Prabhakara/tf-multitenant-gcp-opus5">tf-multitenant-gcp-opus5</a></p>
+      </div>
+      <div class="panel">
+        <h3>Astra repo</h3>
+        <p class="stat" style="font-size:34px">20 files</p>
+        <p class="body">Single root, no child modules, tfvars tenant map, shared project, one Cloud SQL instance per tenant.</p>
+        <p class="mono-small"><a href="https://github.com/Sreenivas-Sadhu-Prabhakara/tf-multitenant-gcp-astra6">tf-multitenant-gcp-astra6</a></p>
+      </div>
+      <div class="panel">
+        <h3>Not run</h3>
+        <p class="warn">terraform plan / apply</p>
+        <p class="body">Would make the score depend on project state, not code. A stated limit, not an oversight.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="results rev" aria-labelledby="results-title">
+    <div class="kicker"><span class="dot"></span> Completed head-to-head</div>
+    <h2 id="results-title">Results</h2>
+    <p class="lede">Tied on every objective build check. GPT-6 Astra wins by <strong>9.5 points</strong>, almost all of it on the cross-review round.</p>
+    <div class="result-grid">
+      <article class="result-card opus">
+        <div class="result-label">Claude Opus 5 (1M)</div>
+        <div class="result-score">88.5 <span>/ 100</span></div>
+        <p class="ok">Clean judge at round 2</p>
+        <ul class="result-facts">
+          <li><span>Objective build (r1 → r2, of 75)</span><span>72 → 74</span></li>
+          <li><span>Architecture judgement (of 15)</span><span>13</span></li>
+          <li><span>Cross-review (of 10)</span><span>1.5</span></li>
+          <li><span>Findings raised → verified</span><span>6 → 3, all low</span></li>
+          <li><span>Wall time, three rounds</span><span>3,103 s</span></li>
+          <li><span>Output tokens · cost</span><span>246,731 · $16.37</span></li>
+        </ul>
+      </article>
+      <article class="result-card gpt">
+        <div class="result-label">GPT-6 Astra</div>
+        <div class="result-score">98 <span>/ 100</span></div>
+        <p class="ok">Clean judge at round 2 · leader</p>
+        <ul class="result-facts">
+          <li><span>Objective build (r1 → r2, of 75)</span><span>72 → 74</span></li>
+          <li><span>Architecture judgement (of 15)</span><span>14</span></li>
+          <li><span>Cross-review (of 10)</span><span>10</span></li>
+          <li><span>Findings raised → verified</span><span>16 → 15</span></li>
+          <li><span>Wall time, three rounds</span><span>954 s</span></li>
+          <li><span>Output tokens · cost</span><span>25,214 · not reported</span></li>
+        </ul>
+      </article>
+    </div>
+    <p class="result-note"><strong>Interpretation:</strong> the build itself does not separate these models. Both passed fmt, init, validate and tflint on the first draft, both failed only the unannounced checkov scan, and both cleared it in one repair pass with no suppressions. Each lost one different objective point: Opus pinned providers with ranges where the brief said explicit versions; Astra shipped no child modules. The gap opened in round 3. Astra's review of the Opus repo produced 15 verified defects, including a project-wide <code>cloudsql.client</code> grant with no IAM condition and a dead-letter topic with no subscriber. Opus's review of the Astra repo produced 3 verified low-severity items, and its one high-severity claim rested on a GCS restriction the grader could not confirm still exists. The architecture section moved one point on blast radius for the same IAM finding. Cost and speed are reported, not scored: the harnesses differ, and Codex CLI reports no dollar figure.</p>
+  </section>
+
+  <section class="panel rev" style="margin-top:18px">
+    <h2>Round by round</h2>
+    <div class="table-scroll">
+    <table class="plain-table">
+      <thead><tr><th>Round</th><th>Opus 5 (1M)</th><th>GPT-6 Astra</th></tr></thead>
+      <tbody>
+        <tr><th>1 · Build</th><td>fmt/init/validate/tflint pass · checkov 27 failed of 75 · 1,417 s · 113,865 out tokens · $7.13</td><td>fmt/init/validate/tflint pass · checkov 13 failed of 40 · 594 s · 17,622 out tokens</td></tr>
+        <tr><th>2 · Repair</th><td>checkov 0 failed of 85 · 16 files, +610 lines (new KMS module, CMEK, 218 README lines) · 890 s · $6.30</td><td>checkov 0 failed of 42 · 4 files, +84 lines (SQL flags, SSL, flow logs, bucket settings) · 152 s</td></tr>
+        <tr><th>3 · Review</th><td>6 raised, 3 verified real, precision 0.50 · 796 s · $2.94</td><td>16 raised, 15 verified real, precision 0.94 · 208 s</td></tr>
+        <tr><th>Read-only violations</th><td class="ok">none</td><td class="ok">none</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <section class="panel rev" style="margin-top:18px">
+    <h2>What separated them</h2>
+    <table class="plain-table">
+      <tbody>
+        <tr><th>Repair style</th><td>Given the same kind of checkov output, Astra fixed exactly what was listed. Opus fixed it and added a KMS module, customer-managed keys and 218 README lines. Both are clean; one grew the surface.</td></tr>
+        <tr><th>Review depth</th><td>Astra read the whole Opus repo and found real defects in eventing, IAM conditions, alert filters and the offboarding runbook. Opus's review of the smaller Astra repo argued mostly with documented design choices.</td></tr>
+        <tr><th>Blast radius</th><td>Astra conditioned SQL roles on the tenant's own dedicated instance. Opus granted the role project-wide and relied on a manual REVOKE step for shared-instance CONNECT. Both scope secrets, buckets and topics per tenant.</td></tr>
+        <tr><th>Fixed in advance</th><td>Brief, rubric, prompts and judge config were committed before any model ran. The grader knew which arm was which; sections 1–4, 6 and 7 are machine-checkable or verified-by-reproduction, and section 5 is five yes/no questions.</td></tr>
+      </tbody>
+    </table>
+  </section>
+</main>
+</body>
+</html>

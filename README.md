@@ -22,6 +22,7 @@ is the point.
 | **`routing/`** | **The output.** [`ROUTING.md`](routing/ROUTING.md) + [`routing.json`](routing/routing.json): role → model → effort, evidence-backed, ready to wire into Kriya's per-agent config. |
 | **`harness/`** | The engine — [`run-lab.sh`](harness/run-lab.sh) + [`grade.py`](harness/grade.py) + [README](harness/README.md). Runs a head-to-head via Claude Code (Max plan, no API key) and turns raw runs into an auditable `results.json`. Adding lab #4, #5, … is mechanical. |
 | **`shared/`** | One keynote design system (`keynote.css`) so every deck is one visual family. |
+| **`opus5-1m-vs-astra6-gcp-multitenant-tf/`** | Lab — **Opus 5 (1M) vs GPT-6 Astra** building a multi-tenant GCP platform in Terraform: build → repair → cross-review, machine-checked judge, `BRIEF.md` + `RUBRIC.md` fixed before the run. **Deviates from the trust model below:** both arms' generated code is kept in public repos ([opus5](https://github.com/Sreenivas-Sadhu-Prabhakara/tf-multitenant-gcp-opus5), [astra6](https://github.com/Sreenivas-Sadhu-Prabhakara/tf-multitenant-gcp-astra6)) so the result is independently reviewable. Runner: [`harness/run-build-lab.sh`](harness/run-build-lab.sh). |
 | **`sonnet5-vs-opus48-default/`** | Lab — Sonnet 5 vs Opus 4.8 at **default** effort. `index.html` deck + `meta.json` + `scores.json` + generated `results.json`. |
 | **`sonnet5-vs-opus48-ultrathink/`** | Lab — the same, re-run at **max** effort (ultrathink). |
 | **`fable/`** | The original **Fable Field Guide** (Claude Fable 5 explainer). |
@@ -34,6 +35,9 @@ is the point.
   unreliable narrators about their own identity).
 - Only **distilled metrics** are committed. The models' generated answers/code
   are discarded.
+  *Exception, stated up front:* the Terraform lab keeps both arms' full output
+  in public repos, because reusable infrastructure code is worth more reviewable
+  than discarded.
 - **Costs** are normalized to official published per-token rates.
 - Grading has an explicit human-in-the-loop step against published answer keys —
   the *measurement* is automated and reproducible; the *judgement* is in-repo and
